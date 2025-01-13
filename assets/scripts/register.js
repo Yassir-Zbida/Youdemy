@@ -1,4 +1,5 @@
-// Mobile sidebar menu
+//  header sidebar
+
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const sidebarMenu = document.getElementById('sidebar-menu');
 const closeSidebar = document.getElementById('close-sidebar');
@@ -18,29 +19,16 @@ sidebarMenu.addEventListener('click', (e) => {
 });
 
 
-function toggleAnswer(button) {
-    const answer = button.nextElementSibling;
-    const icon = button.querySelector("i");
-
-    if (answer.classList.contains("hidden")) {
-        answer.classList.remove("hidden");
-        answer.style.maxHeight = answer.scrollHeight + "px";
-    } else {
-        answer.style.maxHeight = "0";
-        setTimeout(() => {
-            answer.classList.add("hidden");
-        }, 300);
-    }
-
-    icon.classList.toggle("ri-arrow-down-s-line");
-    icon.classList.toggle("ri-arrow-up-s-line");
-}
-
+// Script to add selected class to active radio buttons
 document.querySelectorAll(".role-option").forEach(option => {
     option.addEventListener("click", function () {
+        // Remove the 'selected' class from all labels
         document.querySelectorAll(".role-option").forEach(el => el.classList.remove("selected"));
+        
+        // Add the 'selected' class to the clicked label
         this.classList.add("selected");
-        const input = this.querySelector("input");
-        input.checked = true;
+        
+        // Optionally add a class to the input element to visually indicate selection (if you want)
+        this.querySelector("input").checked = true;
     });
 });

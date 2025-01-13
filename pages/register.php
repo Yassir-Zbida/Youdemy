@@ -7,10 +7,18 @@
     <title>Register - Youdemy Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="../assets/scripts/register.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
 </head>
 
+
 <body>
+    <style>
+        .selected {
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+    </style>
 
     <!-- main container -->
     <div class="min-h-screen flex flex-col">
@@ -41,41 +49,63 @@
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                    <a href="./index.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Home</a>
-                        <a href="./courses.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Courses</a>
-                        <a href="./pricing.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Pricing</a>
-                        <a href="./features.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Features</a>
-                        <a href="./features.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Blog</a>
-                        <a href="./contact.php" class="text-gray-900 hover:text-bg-yellow-500 transition-colors">Help Center</a>
+                        <a href="./index.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="./courses.php"
+                            class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
+                        <a href="./pricing.php"
+                            class="text-gray-900 hover:text-yellow-500 transition-colors">Pricing</a>
+                        <a href="./features.php"
+                            class="text-gray-900 hover:text-yellow-500 transition-colors">Features</a>
+                        <a href="./blog.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Blog</a>
+                        <a href="./contact.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Help
+                            Center</a>
                     </nav>
-
                     <div class="flex items-center space-x-4">
                         <button
-                            class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                            class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
                             <a href="./login.php">Login</a>
                         </button>
-
                         <button
-                            class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                            class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
                             <a href="./register.php">Register</a>
                         </button>
-
-
-                        <button class="p-2 hover:text-bg-yellow-500 transition-colors">
+                        <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
                             <i class="ri-menu-4-fill text-2xl"></i>
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Mobile Menu-->
-                <div id="mobile-menu" class="hidden md:hidden py-4">
-                    <nav class="flex flex-col space-y-4">
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 font-bold transition-colors">Home</a>
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 transition-colors">Pages</a>
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 transition-colors">Lms Shortcodes</a>
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 transition-colors">Courses</a>
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 transition-colors">Blog</a>
-                        <a href="#" class="text-gray-700 hover:text-bg-yellow-500 transition-colors">Help Center</a>
+            <!-- Sidebar Menu Mobile -->
+            <div id="sidebar-menu" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden">
+                <div class="fixed top-0 left-0 w-64 bg-white pt-2 h-full shadow-lg">
+                    <div class="flex justify-end items-center px-4">
+                        <button id="close-sidebar" class="text-gray-700 hover:text-yellow-500">
+                            <i class="ri-close-line text-2xl"></i>
+                        </button>
+                    </div>
+                    <nav class="flex flex-col space-y-4 px-4 py-6">
+                        <a href="./index.php"
+                            class="text-gray-700 hover:text-yellow-500 font-bold transition-colors">Home</a>
+                        <a href="./courses.php"
+                            class="text-gray-700 hover:text-yellow-500 transition-colors">Courses</a>
+                        <a href="./pricing.php"
+                            class="text-gray-700 hover:text-yellow-500 transition-colors">Pricing</a>
+                        <a href="./features.php"
+                            class="text-gray-700 hover:text-yellow-500 transition-colors">Features</a>
+                        <a href="./blog.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Blog</a>
+                        <a href="./contact.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Help
+                            Center</a>
+                        <div class="flex flex-col space-y-4 mt-6">
+                            <button
+                                class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                <a href="./login.php">Login</a>
+                            </button>
+                            <button
+                                class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                <a href="./register.php">Register</a>
+                            </button>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -84,52 +114,66 @@
         <!-- Register Form -->
         <section
             class="hero bg-bg-yellow-500/5 flex-grow flex justify-center items-center border-yellow-400 bg-opacity-20 bg-[url('../assets/images/hero-bg1.png')]  bg-cover bg-center">
-            <div class="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-lg w-full max-w-md">
-        <h2 class="text-yellow-400 text-center text-3xl font-semibold mb-6">Register</h2>
-        <form method="post" id="registerForm" enctype="multipart/form-data">
+            <div class="bg-white/10 backdrop-blur-lg rounded-lg p-8 md:shadow-lg w-full max-w-md">
+                <h2 class="text-yellow-400 text-center text-3xl font-semibold mb-6">Register</h2>
+                <form method="post" id="registerForm" enctype="multipart/form-data">
 
 
-            <div class="relative mb-4">
-                <i class="ri-user-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
-                <input type="text" placeholder="Username" name="username" required
-                class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
-                </div>
-
-            <div class="relative mb-4">
-                <i class="ri-mail-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
-                <input type="email" placeholder="Email" name="email" required
-                class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
-                </div>
-
-            <div class="relative mb-4">
-                <i class="ri-lock-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
-                <input type="password" placeholder="Password" name="password" required id="password"
-                class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
-                </div>
-
-            <div class="relative mb-6">
-                <i class="ri-lock-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
-                <input type="password" placeholder="Confirm Password" name="confirm_password" id="confirm_password"
-                    required
-                    class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
+                    <div class="relative mb-4">
+                        <i class="ri-user-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
+                        <input type="text" placeholder="Username" name="username" required
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
                     </div>
 
-            <button type="submit" name="submit"
-            class="w-full py-2 bg-yellow-400 hover:bg-black text-white font-semibold rounded-lg transition duration-200 hover:bg-white hover:border hover:border-yellow-400 hover:text-yellow-400 hover:text-black">
-            Register
-            </button>
-        </form>
+                    <div class="relative mb-4">
+                        <i class="ri-mail-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
+                        <input type="email" placeholder="Email" name="email" required
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-border-yellow-400" />
+                    </div>
 
-        <p class="text-center text-gray-600 mt-4">
-            Already have an account?
-            <a href="./login.php" class="text-black hover:underline text-black">Login</a>
-        </p>
-    </div>
+                    <!-- Role Selection -->
+                    <div class="mb-6 w-full">
+                        <label class="block text-gray-500 font-semibold mb-2">Choose Your Role:</label>
+                        <div class="flex justify-center space-x-4 w-[100%]">
+                            <label
+                                class="role-option flex items-center justify-center w-[50%] border border-gray-300 rounded-lg cursor-pointer text-gray-300 bg-transparent hover:border-yellow-400 hover:text-yellow-400 focus:ring focus:ring-yellow-400 transition">
+                                <input type="radio" name="role" value="student" class="hidden radio-input" />
+                                <span class="font-medium">Student</span>
+                            </label>
+                            <label
+                                class="role-option flex items-center justify-center w-[50%] py-3 border border-gray-300 rounded-lg cursor-pointer text-gray-300 bg-transparent hover:border-yellow-400 hover:text-yellow-400 focus:ring focus:ring-yellow-400 transition">
+                                <input type="radio" name="role" value="instructor" class="hidden radio-input" />
+                                <span class="font-medium">Instructor</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="relative mb-4">
+                        <i class="ri-lock-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
+                        <input type="password" placeholder="Password" name="password" required id="password"
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
+                    </div>
+
+                    <div class="relative mb-6">
+                        <i class="ri-lock-line text-gray-300 absolute left-4 top-2.5 text-xl"></i>
+                        <input type="password" placeholder="Confirm Password" name="confirm_password"
+                            id="confirm_password" required
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
+                    </div>
+
+                    <button type="submit" name="submit"
+                        class="w-full py-2 bg-yellow-400 hover:bg-black text-white font-semibold rounded-lg transition duration-200 hover:bg-white hover:border hover:border-yellow-400 hover:text-yellow-400 hover:text-black">
+                        Register
+                    </button>
+                </form>
+
+                <p class="text-center text-gray-600 mt-4">
+                    Already have an account?
+                    <a href="./login.php" class="text-black hover:underline text-black">Login</a>
+                </p>
+            </div>
         </section>
     </div>
-
-    
-
 
     <!-- Footer Section -->
 

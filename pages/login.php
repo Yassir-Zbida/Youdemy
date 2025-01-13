@@ -7,6 +7,7 @@
     <title>Login - Youdemy Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="../assets/scripts/app.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
 </head>
 
@@ -14,7 +15,6 @@
 
     <!-- main container -->
     <div class="min-h-screen flex flex-col">
-
         <div class="hidden md:block w-full bg-[#f2b212] text-white">
             <div class="container mx-auto px-4 py-2">
                 <div class="flex justify-between items-center text-sm">
@@ -33,14 +33,14 @@
             </div>
         </div>
 
-        <header class="border-b bg-white">
-            <div class="container mx-auto px-4">
+        <header class="border-b bg-white ">
+            <div class="container mx-auto px-4 ">
                 <div class="flex items-center justify-between py-4">
                     <a href="../index.php">
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="./index.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="../index.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Home</a>
                         <a href="./courses.php"
                             class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
                         <a href="./pricing.php"
@@ -53,11 +53,11 @@
                     </nav>
                     <div class="flex items-center space-x-4">
                         <button
-                            class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                            class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
                             <a href="./login.php">Login</a>
                         </button>
                         <button
-                            class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                            class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
                             <a href="./register.php">Register</a>
                         </button>
                         <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
@@ -102,35 +102,11 @@
             </div>
         </header>
 
-        <script>
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const sidebarMenu = document.getElementById('sidebar-menu');
-            const closeSidebar = document.getElementById('close-sidebar');
-
-            mobileMenuBtn.addEventListener('click', () => {
-                sidebarMenu.classList.remove('hidden');
-            });
-
-            closeSidebar.addEventListener('click', () => {
-                sidebarMenu.classList.add('hidden');
-            });
-
-            sidebarMenu.addEventListener('click', (e) => {
-                if (e.target === sidebarMenu) {
-                    sidebarMenu.classList.add('hidden');
-                }
-            });
-        </script>
-
-
-
-
-
 
         <!-- Login Form -->
         <section
             class="hero bg-bg-yellow-500/5 flex-grow flex justify-center items-center border-yellow-400 bg-opacity-20 bg-[url('../assets/images/hero-bg1.png')]  bg-cover bg-center">
-            <div class="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-lg w-full max-w-md">
+            <div class="bg-white/10 backdrop-blur-lg rounded-lg p-8 md:shadow-lg w-full max-w-md">
                 <h2 class="text-yellow-400 text-center text-3xl font-semibold mb-6">Login</h2>
                 <span class="flex justify-center text-center text-red-700 mb-5">
                     <?php if (!empty($errorMessage)): ?>
