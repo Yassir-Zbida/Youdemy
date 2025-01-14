@@ -1,3 +1,28 @@
+<?php
+require_once '../classes/user.php';
+
+$errorMessage = "";
+$database = new Database();
+$db = $database->getConnection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if (empty($email) || empty($password)) {
+        $errorMessage = "Please fill in both email and password";
+    } else {
+        try {
+
+            $user = User::login($db, $email, $password);
+
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -108,21 +133,17 @@
             class="hero bg-bg-yellow-500/5 flex-grow flex justify-center items-center border-yellow-400 bg-opacity-20 bg-[url('../assets/images/hero-bg1.png')]  bg-cover bg-center">
             <div class="bg-white/10 backdrop-blur-lg rounded-lg p-8 md:shadow-lg w-full max-w-md">
                 <h2 class="text-yellow-400 text-center text-3xl font-semibold mb-6">Login</h2>
-                <span class="flex justify-center text-center text-red-700 mb-5">
-                    <?php if (!empty($errorMessage)): ?>
-                        <?= htmlspecialchars($errorMessage) ?>
-                    <?php endif; ?>
-                </span>
+
                 <form method="post">
                     <div class="relative mb-4">
                         <i class="ri-mail-line text-gray-300 absolute left-4 top-2 text-xl"></i>
-                        <input type="text" placeholder="Email" name="email"
+                        <input type="text" placeholder="Email" name="email" required
                             class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
                     </div>
 
                     <div class="relative mb-4">
                         <i class="ri-lock-line text-gray-300 absolute left-4 top-2 text-xl"></i>
-                        <input type="password" placeholder="Password" name="password"
+                        <input type="password" placeholder="Password" name="password" required
                             class="w-full pl-12 border border-gray-300 pr-4 py-2 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
                     </div>
 
@@ -138,6 +159,14 @@
                         class="w-full py-2 bg-yellow-400 hover:bg-black text-white font-semibold rounded-lg transition duration-200 hover:bg-white hover:border hover:border-yellow-400 hover:text-yellow-400 hover:text-black">
                         Login
                     </button>
+
+                    <div class="errorsContainer">
+                        <span class="flex justify-center text-center text-red-700 mb-5 mt-5">
+                            <?php if (!empty($errorMessage)): ?>
+                                <?= htmlspecialchars($errorMessage) ?>
+                            <?php endif; ?>
+                        </span>
+                    </div>
                 </form>
 
                 <p class="text-center text-gray-600  mt-4">

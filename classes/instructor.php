@@ -4,6 +4,11 @@ require_once(__DIR__ . '/user.php');
 
 class Instructor extends User {
 
+    public function __construct($db) {
+        $this->db = $db;
+        $this->role = 'Instructor';
+    }
+
     public function register($username, $email, $password) {
         // Get the database connection
         $connection = $this->db->getConnection();
