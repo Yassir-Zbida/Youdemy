@@ -4,6 +4,10 @@ require_once(__DIR__ . '/user.php');
 
 class Instructor extends User {
 
+    public function performAction(){
+        return "hey" ;
+    }
+
     public function __construct($db) {
         $this->db = $db;
         $this->role = 'Instructor';
@@ -49,9 +53,6 @@ class Instructor extends User {
         }
     }
 
-    public function browseCourses() {
-       
-    }
 }
 ?>
 

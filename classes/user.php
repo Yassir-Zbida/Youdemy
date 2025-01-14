@@ -1,12 +1,11 @@
 <?php
-require_once(__DIR__ . '/db.php'); 
+require_once(__DIR__ . '/db.php');
 require_once(__DIR__ . '/student.php');
 require_once(__DIR__ . '/instructor.php');
 require_once(__DIR__ . '/admin.php');
 
-
-
-abstract class User {
+abstract class User
+{
     protected $db;
     protected $id;
     protected $username;
@@ -14,14 +13,18 @@ abstract class User {
     protected $passwordHash;
     protected $role;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
-    abstract public function register($username, $email, $password);
 
-    public static function login($db, $email, $password) {
-        // Query the database using mysqli
+    abstract public function performAction();
+    // public function register($username, $email, $password);
+    
+
+    public static function login($db, $email, $password)
+    {
         $query = "SELECT * FROM users WHERE email = ?";
         $stmt = $db->prepare($query);
         $stmt->bind_param("s", $email);
@@ -37,15 +40,19 @@ abstract class User {
                 $_SESSION['role'] = $user['role'];
 
                 switch ($user['role']) {
+
                     case 'Student':
-                        header("Location:  ./mycourses.php");
+                        header("Location: ./mycourses.php");
                         return new Student($db, $user['id'], $user['username'], $user['email']);
+
                     case 'Instructor':
                         header("Location: ./instructor_dashboard.php");
                         return new Instructor($db, $user['id'], $user['username'], $user['email']);
+
                     case 'Admin':
                         header("Location: ./admin_dashboard.php");
                         return new Admin($db, $user['id'], $user['username'], $user['email']);
+                
                     default:
                         throw new Exception("Unknown role: " . $user['role']);
                 }
@@ -57,7 +64,26 @@ abstract class User {
         }
     }
 
-    public function logout() {
+   
+    public static function browseCourses($db) {
+        $connection = $db->getConnection();
+        $query = "SELECT c.*, cat.name as category_name 
+                  FROM courses c 
+                  LEFT JOIN categories cat ON c.categoryId = cat.id";
+        $result = $connection->query($query);
+        
+        $courses = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $courses[] = $row;
+            }
+        }
+        return $courses;
+    }
+    
+
+    public function logout()
+    {
         session_destroy();
     }
 }

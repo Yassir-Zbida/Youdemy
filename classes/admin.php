@@ -4,6 +4,11 @@ require_once(__DIR__ . '/user.php');
 
 class Admin extends User {
 
+
+    public function performAction(){
+        return "hey" ;
+    }
+
     public function __construct($db, $id, $username, $email) {
         $this->db = $db;
         $this->id = $id;

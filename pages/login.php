@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                 <form method="post">
                     <div class="relative mb-4">
                         <i class="ri-mail-line text-gray-300 absolute left-4 top-2 text-xl"></i>
-                        <input type="text" placeholder="Email" name="email" required
+                        <input type="email" placeholder="Email" name="email" required
                             class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg bg-white/10 text-gray-600 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400" />
                     </div>
 
