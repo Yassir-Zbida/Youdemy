@@ -1,3 +1,42 @@
+<?php
+require_once '../classes/user.php';
+require_once '../classes/student.php';
+require_once '../classes/instructor.php';
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+    $role = $_POST['role'];
+
+    $db = new Database();
+
+    try {
+        if ($role === 'Student') {
+            $student = new Student($db);
+            $isRegistered = $student->register($username, $email, $password);
+        } elseif ($role === 'Instructor') {
+            $instructor = new Instructor($db);
+            $isRegistered = $instructor->register($username, $email, $password);
+        } else {
+            throw new Exception("Invalid role selected.");
+        }
+
+        if ($isRegistered === true) {
+            header('Location: ./login.php');
+            exit;
+        } else {
+            $error = $isRegistered;
+        }
+    } catch (Exception $e) {
+        $error = 'Error: ' . $e->getMessage();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,7 +88,7 @@
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="./index.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="../index.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Home</a>
                         <a href="./courses.php"
                             class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
                         <a href="./pricing.php"
@@ -137,12 +176,12 @@
                         <div class="flex justify-center space-x-4 w-[100%]">
                             <label
                                 class="role-option flex items-center justify-center w-[50%] border border-gray-300 rounded-lg cursor-pointer text-gray-300 bg-transparent hover:border-yellow-400 hover:text-yellow-400 focus:ring focus:ring-yellow-400 transition">
-                                <input type="radio" name="role" value="student" class="hidden radio-input" />
+                                <input type="radio" name="role" value="Student" class="hidden radio-input" />
                                 <span class="font-medium">Student</span>
                             </label>
                             <label
                                 class="role-option flex items-center justify-center w-[50%] py-3 border border-gray-300 rounded-lg cursor-pointer text-gray-300 bg-transparent hover:border-yellow-400 hover:text-yellow-400 focus:ring focus:ring-yellow-400 transition">
-                                <input type="radio" name="role" value="instructor" class="hidden radio-input" />
+                                <input type="radio" name="role" value="Instructor" class="hidden radio-input" />
                                 <span class="font-medium">Instructor</span>
                             </label>
                         </div>
@@ -165,6 +204,13 @@
                         class="w-full py-2 bg-yellow-400 hover:bg-black text-white font-semibold rounded-lg transition duration-200 hover:bg-white hover:border hover:border-yellow-400 hover:text-yellow-400 hover:text-black">
                         Register
                     </button>
+
+                    <div class="errorsContainer">
+                        <?php if (!empty($error)): ?>
+                            <p class="text-red-600 text-center mt-4"><?php echo htmlspecialchars($error); ?></p>
+                        <?php endif; ?>
+                    </div>
+
                 </form>
 
                 <p class="text-center text-gray-600 mt-4">

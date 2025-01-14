@@ -1,3 +1,7 @@
+<?php
+require_once("./classes/db.php");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
