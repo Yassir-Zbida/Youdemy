@@ -3,6 +3,7 @@ require_once '../classes/user.php';
 require_once '../classes/course.php';
 
 session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
 
 $db = new Database();
 $course = new Course($db);
@@ -82,18 +83,22 @@ $totalPages = ceil($totalCourses / $limit);
                             Center</a>
                     </nav>
                     <div class="flex items-center space-x-4">
-                        <button
-                            class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                            <a href="./login.php">Login</a>
-                        </button>
-                        <button
-                            class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                            <a href="./register.php">Register</a>
-                        </button>
-                        <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
-                            <i class="ri-menu-4-fill text-2xl"></i>
-                        </button>
-                    </div>
+                            <?php if (!$isLoggedIn): ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                    <a href="./pages/login.php">Login</a>
+                                </button>
+                                <button
+                                    class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                    <a href="./pages/register.php">Register</a>
+                                </button>
+                            <?php else: ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                    <a href="./pages/logout.php">Logout</a>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                 </div>
             </div>
 
@@ -118,14 +123,23 @@ $totalPages = ceil($totalCourses / $limit);
                         <a href="./contact.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Help
                             Center</a>
                         <div class="flex flex-col space-y-4 mt-6">
-                            <button
-                                class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                                <a href="./login.php">Login</a>
-                            </button>
-                            <button
-                                class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                                <a href="./register.php">Register</a>
-                            </button>
+                        <div class="flex items-center space-x-4">
+                            <?php if (!$isLoggedIn): ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                    <a href="./pages/login.php">Login</a>
+                                </button>
+                                <button
+                                    class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                    <a href="./pages/register.php">Register</a>
+                                </button>
+                            <?php else: ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                    <a href="./pages/logout.php">Logout</a>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                         </div>
                     </nav>
                 </div>

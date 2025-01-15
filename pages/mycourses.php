@@ -2,12 +2,23 @@
 require_once '../classes/user.php';
 require_once '../classes/course.php';
 
-session_start();
+User::isLoggedIn();
+$isLoggedIn = isset($_SESSION['user_id']);
 
 $db = new Database();
 $course = new Course($db);
-$courses = $course->browseCourses($db);
 
+
+
+$limit = 6;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max($page, 1);
+$offset = ($page - 1) * $limit;
+
+$courses = $course->browseCourses($db, $limit, $offset);
+$totalCourses = $course->countCourses($db);
+
+$totalPages = ceil($totalCourses / $limit);
 ?>
 
 <!DOCTYPE html>
@@ -61,29 +72,30 @@ $courses = $course->browseCourses($db);
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="../index.php" class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="../index.php" class=" hover:text-yellow-500 transition-colors">Home</a>
                         <a href="./courses.php"
                             class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
                         <a href="./pricing.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Pricing</a>
-                        <a href="./features.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Features</a>
-                        <a href="./blog.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Blog</a>
+                            class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">My Courses</a>
                         <a href="./contact.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Help
                             Center</a>
                     </nav>
                     <div class="flex items-center space-x-4">
-                        <button
-                            class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                            <a href="./login.php">Login</a>
-                        </button>
-                        <button
-                            class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                            <a href="./register.php">Register</a>
-                        </button>
-                        <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
-                            <i class="ri-menu-4-fill text-2xl"></i>
-                        </button>
+                    <?php if (!$isLoggedIn): ?>
+                            <button
+                                class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                <a href="./pages/login.php">Login</a>
+                            </button>
+                            <button
+                                class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                <a href="./pages/register.php">Register</a>
+                            </button>
+                        <?php else: ?>
+                            <button
+                                class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                <a href="./pages/logout.php">Logout</a>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -108,15 +120,22 @@ $courses = $course->browseCourses($db);
                         <a href="./blog.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Blog</a>
                         <a href="./contact.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Help
                             Center</a>
-                        <div class="flex flex-col space-y-4 mt-6">
-                            <button
-                                class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                                <a href="./login.php">Login</a>
-                            </button>
-                            <button
-                                class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                                <a href="./register.php">Register</a>
-                            </button>
+                        <div class="flex items-center space-x-4">
+                            <?php if (!$isLoggedIn): ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                    <a href="./pages/login.php">Login</a>
+                                </button>
+                                <button
+                                    class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                    <a href="./pages/register.php">Register</a>
+                                </button>
+                            <?php else: ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                    <a href="./pages/logout.php">Logout</a>
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </nav>
                 </div>
@@ -126,31 +145,35 @@ $courses = $course->browseCourses($db);
 
     <!-- Courses Grid Section -->
     <section>
-    <div class="py-10 md:px-12 px-6">
-        <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
-            Explore Our <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php if (!empty($courses)) : ?>
-                <?php foreach ($courses as $course) : ?>
-                    <div class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
-                        <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image" class="rounded-t-lg w-full">
-                        <div class="py-3">
-                            <p class="text-sm text-gray-500 flex items-center space-x-2">
-                            </p>
-                            <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?></h3>
-                            <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
-                            <div class="flex items-center justify-between mt-3">
-                                <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?></p>
+        <div class="py-10 md:px-12 px-6">
+            <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
+                My <span
+                    class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <?php if (!empty($courses)): ?>
+                    <?php foreach ($courses as $course): ?>
+                        <div
+                            class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
+                            <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image"
+                                class="rounded-t-lg w-full">
+                            <div class="py-3">
+                                <p class="text-sm text-gray-500 flex items-center space-x-2">
+                                </p>
+                                <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?>
+                                </h3>
+                                <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
+                                <div class="flex items-center justify-between mt-3">
+                                    <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <p class="text-center text-gray-500">No courses available at the moment.</p>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-center text-gray-500">No courses available at the moment.</p>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
     </section>
 
 

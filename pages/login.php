@@ -1,5 +1,7 @@
 <?php
 require_once '../classes/user.php';
+User::redirectIfLoggedIn();
+
 
 $errorMessage = "";
 $database = new Database();

@@ -65,9 +65,35 @@ abstract class User
     }
 
 
-    public function logout()
+    public static function logout()
     {
+        session_start();
+        session_unset();
         session_destroy();
+
+        header("Location: ../index.php");
+        exit();
+    }
+
+    public static function isLoggedIn()
+    {
+        session_start(); 
+
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../pages/login.php");
+            exit();
+        }
+    }
+
+    public static function redirectIfLoggedIn()
+    {
+        session_start();
+
+        if (isset($_SESSION['user_id'])) {
+            // If logged in, redirect to index.php
+            header("Location: ../index.php");
+            exit();
+        }
     }
 }
 ?>

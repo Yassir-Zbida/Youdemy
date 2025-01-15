@@ -2,6 +2,7 @@
 require_once '../classes/user.php';
 require_once '../classes/student.php';
 require_once '../classes/instructor.php';
+User::redirectIfLoggedIn();
 
 $error = '';
 
