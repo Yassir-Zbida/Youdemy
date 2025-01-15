@@ -266,17 +266,19 @@ $grid_courses = array_slice($courses, 0, 6);
             Explore Our <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php if (!empty($grid_courses)) : ?>
-                <?php foreach ($grid_courses as $course) : ?>
+            <?php if (!empty($courses)) : ?>
+                <?php foreach ($courses as $course) : ?>
                     <div class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
                         <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image" class="rounded-t-lg w-full">
                         <div class="py-3">
-                            <p class="text-sm text-gray-500 flex items-center space-x-2">
+                            <p class="text-sm text-gray-500 flex items-center space-x-2">Created By <span class="font-bold ml-1"><?= htmlspecialchars($course['instructor_name'])?></span>
                             </p>
                             <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?></h3>
                             <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
                             <div class="flex items-center justify-between mt-3">
-                                <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?></p>
+                                <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
+                                <button class="font-bold underline text-yellow-400"><a href="course-preview.php?id=<?php echo $course['course_id']; ?>">View Course</a>
+                                </button>
                             </div>
                         </div>
                     </div>

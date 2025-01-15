@@ -21,7 +21,7 @@ abstract class User
 
     abstract public function performAction();
     // public function register($username, $email, $password);
-    
+
 
     public static function login($db, $email, $password)
     {
@@ -52,7 +52,7 @@ abstract class User
                     case 'Admin':
                         header("Location: ./admin_dashboard.php");
                         return new Admin($db, $user['id'], $user['username'], $user['email']);
-                
+
                     default:
                         throw new Exception("Unknown role: " . $user['role']);
                 }
@@ -64,14 +64,22 @@ abstract class User
         }
     }
 
-   
-    public static function browseCourses($db) {
+
+    public static function browseCourses($db)
+    {
         $connection = $db->getConnection();
-        $query = "SELECT c.*, cat.name as category_name 
-                  FROM courses c 
-                  LEFT JOIN categories cat ON c.categoryId = cat.id";
+        $query = "SELECT 
+                    c.id AS course_id, 
+                    c.title , 
+                    c.description, 
+                    c.price, 
+                    c.thumbnail,
+                    u.username AS instructor_name
+                  FROM courses c
+                  LEFT JOIN 
+                  users u ON c.instructorId = u.id; ";
         $result = $connection->query($query);
-        
+
         $courses = [];
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -80,7 +88,7 @@ abstract class User
         }
         return $courses;
     }
-    
+
 
     public function logout()
     {

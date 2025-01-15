@@ -74,9 +74,9 @@ if (isset($_SESSION['role'])) {
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="../index.php" class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="../index.php" class=" hover:text-yellow-500 transition-colors">Home</a>
                         <a href="./courses.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
+                            class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">Courses</a>
                         <a href="./pricing.php"
                             class="text-gray-900 hover:text-yellow-500 transition-colors">Pricing</a>
                         <a href="./features.php"
@@ -149,12 +149,14 @@ if (isset($_SESSION['role'])) {
                     <div class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
                         <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image" class="rounded-t-lg w-full">
                         <div class="py-3">
-                            <p class="text-sm text-gray-500 flex items-center space-x-2">
+                            <p class="text-sm text-gray-500 flex items-center space-x-2">Created By <span class="font-bold ml-1"><?= htmlspecialchars($course['instructor_name'])?></span>
                             </p>
                             <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?></h3>
                             <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
                             <div class="flex items-center justify-between mt-3">
-                                <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?></p>
+                                <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
+                                <button class="font-bold underline text-yellow-400"><a href="course-preview.php?id=<?php echo $course['course_id']; ?>">View Course</a>
+                                </button>
                             </div>
                         </div>
                     </div>

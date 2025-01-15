@@ -4,6 +4,7 @@ require_once(__DIR__ . '/db.php');
 class Course {
     private $db;
     private $id;
+    private $instructorId;
     private $title;
     private $description;
     private $price;
@@ -97,7 +98,6 @@ class Course {
         return $connection->query($query);
     }
 
-    // Delete course
     public function deleteCourse($id) {
         $connection = $this->db->getConnection();
         $id = $connection->real_escape_string($id);
@@ -106,7 +106,6 @@ class Course {
         return $connection->query($query);
     }
 
-    // Get course statistics
     public function getCourseStatistics($courseId) {
         $connection = $this->db->getConnection();
         $courseId = $connection->real_escape_string($courseId);
