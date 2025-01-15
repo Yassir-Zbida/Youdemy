@@ -71,7 +71,7 @@ $menuItems = User::getMenuItems($userRole);
                         <?php else: ?>
                             <button
                                 class="p-2 px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
-                                <a href="./pages/logout.php">Logout</a>
+                                <a href="./logout.php">Logout</a>
                             </button>
                         <?php endif; ?>
                         <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">

@@ -108,7 +108,6 @@ $grid_courses = array_slice($courses, 0, 6);
                         Empower Your Mind with World-Class Learning – Join Youdemy Today
                     </p>
 
-                    <!-- Search Bar -->
                     <div class="mt-8">
                         <div class="relative">
                             <input type="text" placeholder="What Do You Need To Learn?"
