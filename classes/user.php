@@ -91,7 +91,7 @@ abstract class User
     } else {
         throw new Exception("Invalid email");
     }
-}
+    }
 
     
 
@@ -125,6 +125,43 @@ abstract class User
             // If logged in, redirect to index.php
             header("Location: ../index.php");
             exit();
+        }
+    }
+
+    public static function getMenuItems($role)
+    {
+        switch ($role) {
+            case 'Admin':
+                return [
+                    ['Dashboard', './pages/dashboard.php'],
+                    ['Categories', './pages/categories.php'],
+                    ['Users', './pages/users.php'],
+                    ['Statistics', './pages/statistics.php'],
+                    ['Tags', './pages/tags.php'],
+                ];
+            case 'Student':
+                return [
+                    ['Home', './index.php'],
+                    ['Courses', './pages/courses.php'],
+                    ['My Courses', './pages/my_courses.php'],
+                    ['Help Center', './pages/contact.php'],
+                ];
+            case 'Instructor':
+                return [
+                    ['Home', './index.php'],
+                    ['My Courses', './pages/my_courses.php'],
+                    ['Statistics', './pages/statistics.php'],
+                    ['Help Center', './pages/contact.php'],
+                ];
+            default:
+                return [
+                    ['Home', './index.php'],
+                    ['Courses', './pages/courses.php'],
+                    ['Pricing', './pages/pricing.php'],
+                    ['Features', './pages/features.php'],
+                    ['Blog', './blog.php'],
+                    ['Help Center', './pages/contact.php'],
+                ];
         }
     }
 }

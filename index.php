@@ -4,11 +4,14 @@ require_once './classes/course.php';
 
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
+$userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
+$menuItems = User::getMenuItems($userRole);
 
 $db = new Database();
 $course = new Course($db);
 $courses = $course->browseCourses($db, 6, 1);
 $grid_courses = array_slice($courses, 0, 6);
+
 
 ?>
 <!DOCTYPE html>
@@ -55,88 +58,38 @@ $grid_courses = array_slice($courses, 0, 6);
         </div>
 
         <!-- Header -->
-        <header class="border-b bg-white ">
-            <div class="container mx-auto px-4 ">
+        <header class="border-b bg-white">
+            <div class="container mx-auto px-4">
                 <div class="flex items-center justify-between py-4">
                     <a href="./index.php">
-                        <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
+                        <img src="./assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="./index.php"
-                            class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">Home</a>
-                        <a href="./pages/courses.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
-                        <a href="./pages/pricing.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Pricing</a>
-                        <a href="./pages/features.php"
-                            class="text-gray-900 hover:text-yellow-500 transition-colors">Features</a>
-                        <a href="./blog.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Blog</a>
-                        <a href="./pages/contact.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Help
-                            Center</a>
+                        <?php foreach ($menuItems as $item): ?>
+                            <a href="<?= $item[1] ?>" class="text-gray-900 hover:text-yellow-500 transition-colors">
+                                <?= $item[0] ?>
+                            </a>
+                        <?php endforeach; ?>
                     </nav>
-                    <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-4">
                         <?php if (!$isLoggedIn): ?>
                             <button
-                                class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                class="p-2 px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
                                 <a href="./pages/login.php">Login</a>
                             </button>
                             <button
-                                class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                class="p-2 px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
                                 <a href="./pages/register.php">Register</a>
                             </button>
                         <?php else: ?>
                             <button
-                                class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                class="p-2 px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
                                 <a href="./pages/logout.php">Logout</a>
                             </button>
                         <?php endif; ?>
                         <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
                             <i class="ri-menu-4-fill text-2xl"></i>
                         </button>
-                    </div>
-                        
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar Menu Mobile -->
-            <div id="sidebar-menu" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden">
-                <div class="fixed top-0 left-0 w-64 bg-white pt-2 h-full shadow-lg">
-                    <div class="flex justify-end items-center px-4">
-                        <button id="close-sidebar" class="text-gray-700 hover:text-yellow-500">
-                            <i class="ri-close-line text-2xl"></i>
-                        </button>
-                    </div>
-                    <nav class="flex flex-col space-y-4 px-4 py-6">
-                        <a href="./index.php"
-                            class="text-gray-700 hover:text-yellow-500 font-bold transition-colors">Home</a>
-                        <a href="./courses.php"
-                            class="text-gray-700 hover:text-yellow-500 transition-colors">Courses</a>
-                        <a href="./pricing.php"
-                            class="text-gray-700 hover:text-yellow-500 transition-colors">Pricing</a>
-                        <a href="./features.php"
-                            class="text-gray-700 hover:text-yellow-500 transition-colors">Features</a>
-                        <a href="./blog.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Blog</a>
-                        <a href="./contact.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Help
-                            Center</a>
-                    </nav>
-                    <div class="flex items-center space-x-4">
-                    <?php if (!$isLoggedIn): ?>
-                            <button
-                                class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                                <a href="./pages/login.php">Login</a>
-                            </button>
-                            <button
-                                class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                                <a href="./pages/register.php">Register</a>
-                            </button>
-                        <?php else: ?>
-                            <button
-                                class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
-                                <a href="./pages/logout.php">Logout</a>
-                            </button>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
