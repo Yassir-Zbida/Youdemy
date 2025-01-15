@@ -25,7 +25,6 @@ class Student extends User {
     }
 
     public function register($username, $email, $password) {
-        // Get the database connection
         $connection = $this->db->getConnection();
 
         $usernameExists = 0; 

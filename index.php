@@ -277,14 +277,14 @@ $grid_courses = array_slice($courses, 0, 6);
                             <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
                             <div class="flex items-center justify-between mt-3">
                                 <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
-                                <button class="font-bold underline text-yellow-400"><a href="course-preview.php?id=<?php echo $course['course_id']; ?>">View Course</a>
+                                <button class="font-bold underline text-yellow-400"><a href="./pages/course-preview.php?id=<?php echo $course['course_id']; ?>">View Course</a>
                                 </button>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php else : ?>
-                <p class="text-center text-gray-500">No courses available at the moment.</p>
+                <p class="text-center text-gray-500">No courses available</p>
             <?php endif; ?>
         </div>
     </div>

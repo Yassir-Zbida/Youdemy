@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             $instructor = new Instructor($db);
             $isRegistered = $instructor->register($username, $email, $password);
         } else {
-            throw new Exception("Invalid role selected.");
+            throw new Exception("Invalid role selected");
         }
 
         if ($isRegistered === true) {
