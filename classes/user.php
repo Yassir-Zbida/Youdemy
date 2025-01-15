@@ -3,6 +3,7 @@ require_once(__DIR__ . '/db.php');
 require_once(__DIR__ . '/student.php');
 require_once(__DIR__ . '/instructor.php');
 require_once(__DIR__ . '/admin.php');
+define('BASE_PATH', '/');
 
 abstract class User
 {
@@ -129,40 +130,42 @@ abstract class User
     }
 
     public static function getMenuItems($role)
-    {
-        switch ($role) {
-            case 'Admin':
-                return [
-                    ['Dashboard', './pages/dashboard.php'],
-                    ['Categories', './pages/categories.php'],
-                    ['Users', './pages/users.php'],
-                    ['Statistics', './pages/statistics.php'],
-                    ['Tags', './pages/tags.php'],
-                ];
-            case 'Student':
-                return [
-                    ['Home', './index.php'],
-                    ['Courses', './pages/courses.php'],
-                    ['My Courses', './pages/my_courses.php'],
-                    ['Help Center', './pages/contact.php'],
-                ];
-            case 'Instructor':
-                return [
-                    ['Home', './index.php'],
-                    ['My Courses', './pages/my_courses.php'],
-                    ['Statistics', './pages/statistics.php'],
-                    ['Help Center', './pages/contact.php'],
-                ];
-            default:
-                return [
-                    ['Home', './index.php'],
-                    ['Courses', './pages/courses.php'],
-                    ['Pricing', './pages/pricing.php'],
-                    ['Features', './pages/features.php'],
-                    ['Blog', './blog.php'],
-                    ['Help Center', './pages/contact.php'],
-                ];
-        }
+{
+    $basePath = BASE_PATH;
+    switch ($role) {
+        case 'Admin':
+            return [
+                ['Dashboard', "{$basePath}pages/dashboard.php"],
+                ['Categories', "{$basePath}pages/categories.php"],
+                ['Users', "{$basePath}pages/users.php"],
+                ['Statistics', "{$basePath}pages/statistics.php"],
+                ['Tags', "{$basePath}pages/tags.php"],
+            ];
+        case 'Student':
+            return [
+                ['Home', "{$basePath}index.php"],
+                ['Courses', "{$basePath}pages/courses.php"],
+                ['My Courses', "{$basePath}pages/mycourses.php"],
+                ['Help Center', "{$basePath}pages/contact.php"],
+            ];
+        case 'Instructor':
+            return [
+                ['Home', "{$basePath}index.php"],
+                ['My Courses', "{$basePath}pages/my_courses.php"],
+                ['Statistics', "{$basePath}pages/statistics.php"],
+                ['Help Center', "{$basePath}pages/contact.php"],
+            ];
+        default:
+            return [
+                ['Home', "{$basePath}index.php"],
+                ['Courses', "{$basePath}pages/courses.php"],
+                ['Pricing', "{$basePath}pages/pricing.php"],
+                ['Features', "{$basePath}pages/features.php"],
+                ['Blog', "{$basePath}blog.php"],
+                ['Help Center', "{$basePath}pages/contact.php"],
+            ];
     }
+}
+
 }
 ?>
