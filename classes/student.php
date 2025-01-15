@@ -26,42 +26,46 @@ class Student extends User {
 
     public function register($username, $email, $password) {
         $connection = $this->db->getConnection();
-
+    
         $usernameExists = 0; 
         $emailExists = 0;
-
+    
+        // Check if username exists
         $stmt = $connection->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->bind_result($usernameExists); 
         $stmt->fetch();
         $stmt->close();
-
+    
+        // Check if email exists
         $stmt = $connection->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->bind_result($emailExists); 
         $stmt->fetch();
         $stmt->close();
-
+    
         if ($usernameExists > 0) {
             return "Username '$username' is already taken.";
         }
-
+    
         if ($emailExists > 0) {
             return "Email '$email' is already in use.";
         }
-
+    
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $connection->prepare("INSERT INTO users (username, email, passwordHash, role) VALUES (?, ?, ?, 'Student')");
+    
+        $stmt = $connection->prepare("INSERT INTO users (username, email, passwordHash, role, status) VALUES (?, ?, ?, 'Student', 'activated')");
         $stmt->bind_param("sss", $username, $email, $passwordHash);
-
+    
         if ($stmt->execute()) {
             return true;
         } else {
             return "There was an error registering the user.";
         }
     }
+    
 
     
 }

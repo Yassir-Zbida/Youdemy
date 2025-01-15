@@ -12,6 +12,7 @@ abstract class User
     protected $email;
     protected $passwordHash;
     protected $role;
+    protected $status;
 
     public function __construct($db)
     {
@@ -20,49 +21,80 @@ abstract class User
 
 
     abstract public function performAction();
-    // public function register($username, $email, $password);
 
 
     public static function login($db, $email, $password)
-    {
-        $query = "SELECT * FROM users WHERE email = ?";
-        $stmt = $db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+{
+    session_start();
 
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-
-            if (password_verify($password, $user['passwordHash'])) {
-                session_start();
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['role'] = $user['role'];
-
-                switch ($user['role']) {
-
-                    case 'Student':
-                        header("Location: ./mycourses.php");
-                        return new Student($db, $user['id'], $user['username'], $user['email']);
-
-                    case 'Instructor':
-                        header("Location: ./instructor_dashboard.php");
-                        return new Instructor($db, $user['id'], $user['username'], $user['email']);
-
-                    case 'Admin':
-                        header("Location: ./admin_dashboard.php");
-                        return new Admin($db, $user['id'], $user['username'], $user['email']);
-
-                    default:
-                        throw new Exception("Unknown role: " . $user['role']);
-                }
-            } else {
-                throw new Exception("Invalid password");
-            }
-        } else {
-            throw new Exception("Invalid email");
-        }
+    $query = "SELECT * FROM users WHERE email = ?";
+    $stmt = $db->prepare($query);
+    
+    if ($stmt === false) {
+        throw new Exception("Error preparing the statement: " . $db->error);
     }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+
+        if (password_verify($password, $user['passwordHash'])) {
+
+            switch ($user['role']) {
+                case 'Student':
+                    if ($user['status'] === 'pending') {
+                        header("Location: ./pending_status.php");
+                        exit;
+                    } elseif ($user['status'] === 'suspended') {
+                        header("Location: ./suspended_status.php");
+                        exit;
+                    } elseif ($user['status'] === 'activated') {
+                        $_SESSION['user_id'] = $user['id'];
+                        $_SESSION['role'] = $user['role'];
+                        header("Location: ./mycourses.php");
+                        exit; 
+                    } else {
+                        throw new Exception("Unknown status: " . $user['status']);
+                    }
+
+                case 'Instructor':
+                    if ($user['status'] === 'pending') {
+                        header("Location: ./pending_status.php");
+                        exit;
+                    } elseif ($user['status'] === 'suspended') {
+                        header("Location: ./suspended_status.php");
+                        exit;
+                    } elseif ($user['status'] === 'activated') {
+                        $_SESSION['user_id'] = $user['id'];
+                        $_SESSION['role'] = $user['role'];
+                        header("Location: ./instructor_dashboard.php");
+                        exit; 
+                    } else {
+                        throw new Exception("Unknown status: " . $user['status']);
+                    }
+
+                case 'Admin':
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['role'] = $user['role'];
+                    header("Location: ./admin_dashboard.php");
+                    exit; 
+                default:
+                    throw new Exception("Unknown role: " . $user['role']);
+            }
+
+        } else {
+            throw new Exception("Invalid password");
+        }
+    } else {
+        throw new Exception("Invalid email");
+    }
+}
+
+    
+
 
 
     public static function logout()

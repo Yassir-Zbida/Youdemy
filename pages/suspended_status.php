@@ -1,37 +1,19 @@
 <?php
-require_once '../classes/user.php';
-require_once '../classes/course.php';
-
-User::isLoggedIn();
+require_once('../classes/user.php');
+User::redirectIfLoggedIn();
 $isLoggedIn = isset($_SESSION['user_id']);
-
-$db = new Database();
-$course = new Course($db);
-
-
-
-$limit = 6;
-$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$page = max($page, 1);
-$offset = ($page - 1) * $limit;
-
-$courses = $course->browseCourses($db, $limit, $offset);
-$totalCourses = $course->countCourses($db);
-
-$totalPages = ceil($totalCourses / $limit);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youdemy Platform</title>
+    <title>Youdemy Platform - Suspended Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
-    <script src="../assets/scripts/main.js" defer></script>
+    <script src="./assets/scripts/main.js" defer></script>
     <style>
         .text-gradient {
             background: linear-gradient(to right, #f2b212, #fadf10);
@@ -43,8 +25,7 @@ $totalPages = ceil($totalCourses / $limit);
 
 <body>
 
-    <!-- main container -->
-    <div class="flex flex-col">
+    <div class="min-h-screen flex flex-col">
 
         <div class="hidden md:block w-full bg-[#f2b212] text-white">
             <div class="container mx-auto px-4 py-2">
@@ -72,30 +53,40 @@ $totalPages = ceil($totalCourses / $limit);
                         <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                     </a>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="../index.php" class=" hover:text-yellow-500 transition-colors">Home</a>
+                        <a href="../index.php"
+                            class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">Home</a>
                         <a href="./courses.php"
                             class="text-gray-900 hover:text-yellow-500 transition-colors">Courses</a>
                         <a href="./pricing.php"
-                            class="text-yellow-400 font-bold hover:text-yellow-500 transition-colors">My Courses</a>
+                            class="text-gray-900 hover:text-yellow-500 transition-colors">Pricing</a>
+                        <a href="./features.php"
+                            class="text-gray-900 hover:text-yellow-500 transition-colors">Features</a>
+                        <a href="./blog.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Blog</a>
                         <a href="./contact.php" class="text-gray-900 hover:text-yellow-500 transition-colors">Help
                             Center</a>
                     </nav>
                     <div class="flex items-center space-x-4">
-                    <?php if (!$isLoggedIn): ?>
-                            <button
-                                class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                                <a href="./login.php">Login</a>
+                        <div class="flex items-center space-x-4">
+                            <?php if (!$isLoggedIn): ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                    <a href="./login.php">Login</a>
+                                </button>
+                                <button
+                                    class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                    <a href="./register.php">Register</a>
+                                </button>
+                            <?php else: ?>
+                                <button
+                                    class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                    <a href="./logout.php">Logout</a>
+                                </button>
+                            <?php endif; ?>
+                            <button id="mobile-menu-btn" class="p-2 hover:text-yellow-500 transition-colors md:hidden">
+                                <i class="ri-menu-4-fill text-2xl"></i>
                             </button>
-                            <button
-                                class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                                <a href="./register.php">Register</a>
-                            </button>
-                        <?php else: ?>
-                            <button
-                                class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
-                                <a href="./logout.php">Logout</a>
-                            </button>
-                        <?php endif; ?>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -120,63 +111,53 @@ $totalPages = ceil($totalCourses / $limit);
                         <a href="./blog.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Blog</a>
                         <a href="./contact.php" class="text-gray-700 hover:text-yellow-500 transition-colors">Help
                             Center</a>
-                        <div class="flex items-center space-x-4">
-                            <?php if (!$isLoggedIn): ?>
-                                <button
-                                    class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
-                                    <a href="./login.php">Login</a>
-                                </button>
-                                <button
-                                    class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
-                                    <a href="./register.php">Register</a>
-                                </button>
-                            <?php else: ?>
-                                <button
-                                    class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
-                                    <a href="./logout.php">Logout</a>
-                                </button>
-                            <?php endif; ?>
-                        </div>
                     </nav>
+                    <div class="flex items-center space-x-4">
+                        <?php if (!$isLoggedIn): ?>
+                            <button
+                                class="p-2 hidden md:block px-4 bg-yellow-400 text-white rounded-full hover:bg-white hover:text-yellow-400 hover:border hover:border-yellow-400 transition-colors">
+                                <a href="./pages/login.php">Login</a>
+                            </button>
+                            <button
+                                class="p-2 hidden md:block px-4 border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-white transition-colors">
+                                <a href="./pages/register.php">Register</a>
+                            </button>
+                        <?php else: ?>
+                            <button
+                                class="p-2 hidden md:block px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                <a href="./pages/logout.php">Logout</a>
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </header>
-    </div>
 
-    <!-- Courses Grid Section -->
-    <section>
-        <div class="py-10 md:px-12 px-6">
-            <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
-                My <span
-                    class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php if (!empty($courses)): ?>
-                    <?php foreach ($courses as $course): ?>
-                        <div
-                            class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
-                            <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image"
-                                class="rounded-t-lg w-full">
-                            <div class="py-3">
-                                <p class="text-sm text-gray-500 flex items-center space-x-2">
-                                </p>
-                                <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?>
-                                </h3>
-                                <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
-                                <div class="flex items-center justify-between mt-3">
-                                    <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?></p>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-center text-gray-500">No courses available at the moment.</p>
-                <?php endif; ?>
+        <!-- Hero Section -->
+        <section class="hero flex flex-row items-center justify-center mt-24">
+            <div class="mb-6">
+                <img src="../assets/images/access-denied.png" alt="Access Denied" height="400px" width="400px"
+                    class="mx-auto ">
             </div>
-        </div>
-    </section>
+            <div class="flex flex-col justify-start">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Account Suspended</h1>
+                <p class="text-lg text-gray-600 mb-6">
+                    We're sorry, but your account has been suspended. <br>Please contact support for more details.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="../index.php"
+                        class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                        Go Back Home
+                    </a>
+                    <a href="./contact.php"
+                        class="px-6 py-3 bg-white border border-yellow-400 text-yellow-400 font-semibold rounded-full  hover:bg-yellow-400 hover:text-white transition">
+                        Contact Support
+                    </a>
+                </div>
+            </div>
+        </section>
 
-
+    </div>
 
 
     <!-- Footer Section -->
