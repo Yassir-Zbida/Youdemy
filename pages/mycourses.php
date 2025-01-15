@@ -1,26 +1,13 @@
 <?php
 require_once '../classes/user.php';
+require_once '../classes/course.php';
+
 session_start();
 
 $db = new Database();
+$course = new Course($db);
+$courses = $course->browseCourses($db);
 
-if (isset($_SESSION['role'])) {
-    $role = $_SESSION['role'];
-    $userId = $_SESSION['user_id'];
-
-    if ($role == 'Student') {
-        $user = new Student($db);
-    } elseif ($role == 'Instructor') {
-        $user = new Instructor($db);
-    } else {
-        $user = new Admin($db);
-    }
-
-    $courses = $user::browseCourses($db); 
-} else {
-    header("Location: login.php");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>

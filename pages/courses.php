@@ -1,27 +1,23 @@
 <?php
 require_once '../classes/user.php';
+require_once '../classes/course.php';
+
 session_start();
 
 $db = new Database();
+$course = new Course($db);
 
-if (isset($_SESSION['role'])) {
-    $role = $_SESSION['role'];
-    $userId = $_SESSION['user_id'];
+$limit = 6; 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = max($page, 1); 
+$offset = ($page - 1) * $limit;
 
-    if ($role == 'Student') {
-        $user = new Student($db);
-    } elseif ($role == 'Instructor') {
-        $user = new Instructor($db);
-    } else {
-        $user = new Admin($db);
-    }
+$courses = $course->browseCourses($db, $limit, $offset);
+$totalCourses = $course->countCourses($db);
 
-    $courses = $user::browseCourses($db); 
-} else {
-    header("Location: login.php");
-    exit();
-}
+$totalPages = ceil($totalCourses / $limit);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +151,7 @@ if (isset($_SESSION['role'])) {
                             <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
                             <div class="flex items-center justify-between mt-3">
                                 <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
-                                <button class="font-bold underline text-yellow-400"><a href="course-preview.php?id=<?php echo $course['course_id']; ?>">View Course</a>
+                                <button class="font-bold underline text-yellow-400"><a href="course-preview.php?id=<?= htmlspecialchars($course['course_id']); ?>">View Course</a>
                                 </button>
                             </div>
                         </div>
@@ -165,8 +161,26 @@ if (isset($_SESSION['role'])) {
                 <p class="text-center text-gray-500">No courses available at the moment.</p>
             <?php endif; ?>
         </div>
+
+        <!-- Pagination Links -->
+        <div class="flex justify-center mt-6">
+            <nav class="inline-flex items-center space-x-2">
+                <?php if ($page > 1) : ?>
+                    <a href="?page=<?= $page - 1 ?>" class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Previous</a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                    <a href="?page=<?= $i ?>" class="px-4 py-2 <?= $i == $page ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-800' ?> rounded-lg hover:bg-yellow-400 hover:text-white"><?= $i ?></a>
+                <?php endfor; ?>
+
+                <?php if ($page < $totalPages) : ?>
+                    <a href="?page=<?= $page + 1 ?>" class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Next</a>
+                <?php endif; ?>
+            </nav>
+        </div>
     </div>
-    </section>
+</section>
+
 
 
 

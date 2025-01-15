@@ -65,31 +65,6 @@ abstract class User
     }
 
 
-    public static function browseCourses($db)
-    {
-        $connection = $db->getConnection();
-        $query = "SELECT 
-                    c.id AS course_id, 
-                    c.title , 
-                    c.description, 
-                    c.price, 
-                    c.thumbnail,
-                    u.username AS instructor_name
-                  FROM courses c
-                  LEFT JOIN 
-                  users u ON c.instructorId = u.id; ";
-        $result = $connection->query($query);
-
-        $courses = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $courses[] = $row;
-            }
-        }
-        return $courses;
-    }
-
-
     public function logout()
     {
         session_destroy();

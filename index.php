@@ -1,14 +1,13 @@
 <?php
-require_once("./classes/user.php");
-require_once("./classes/visitor.php");
+require_once './classes/user.php';
+require_once './classes/course.php';
+
 session_start();
 
 $db = new Database();
-$user = new Visitor($db);
-$courses = $user::browseCourses($db);
+$course = new Course($db);
+$courses = $course->browseCourses($db , 6 , 1);
 $grid_courses = array_slice($courses, 0, 6); 
-
-
 
 ?>
 <!DOCTYPE html>
