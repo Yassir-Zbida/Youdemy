@@ -19,6 +19,11 @@ $menuItems = User::getMenuItems($userRole);
 $studentId = $_SESSION['user_id'];
 $courseId = isset($_GET['courseId']) ? intval($_GET['courseId']) : 0;
 
+if ($userRole !== 'Student') {
+    header('Location: ../index.php');
+    exit; 
+}
+
 if ($courseId <= 0) {
     header('Location: ./courses.php');
     exit();
@@ -29,20 +34,13 @@ $student = new Student($db);
 $enrollResult = $student->enroll($studentId, $courseId);
 
 if ($enrollResult === true) {
-    $successMessage = "You have successfully enrolled in the course!";
-    $showSuccess = true;  
+    $successMessage = "You have successfully enrolled in the course";
+    $showSuccess = true;
 } else {
     $errorMessage = $enrollResult;
-    $showSuccess = false; 
+    $showSuccess = false;
 }
 
-
-// if ($enrollResult === true) {
-//     $successMessage = "You have successfully enrolled in the course!";
-//     exit();
-// } else {
-//     $errorMessage = $enrollResult;
-// }
 ?>
 
 
@@ -128,34 +126,36 @@ if ($enrollResult === true) {
 
         <!--Enrollment Status -->
         <section class="hero flex flex-col items-center text-center justify-center mt-24">
-    <div class="mb-6">
-        <?php if ($showSuccess): ?>
-            <div>
-                <img src="../assets/images/success.png" alt="Success" height="400" width="400" class="mx-auto">
+            <div class="mb-6">
+                <?php if ($showSuccess): ?>
+                    <div>
+                        <img src="../assets/images/success.png" alt="Success" height="400" width="400" class="mx-auto">
+                    </div>
+                    <p class="text-xl font-semibold text-green-600 mb-4"><?= $successMessage ?></p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="./mycourses.php"
+                            class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                            Go to My Courses
+                        </a>
+                        <a href="./courses.php"
+                            class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                            Enroll in New Course
+                        </a>
+                    </div>
+                <?php elseif (isset($errorMessage)): ?>
+                    <div>
+                        <img src="../assets/images/warning.png" height="400" width="400" class="mx-auto">
+                        <p class="text-red-700 text-xl font-bold mb-4"><?= htmlspecialchars($errorMessage) ?></p>
+                    </div>
+                    <div class="flex justify-center w-full ">
+                        <a href="./courses.php"
+                            class="px-6 mt-2 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                            Go Back To Courses
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
-            <p class="text-xl font-semibold text-green-600 mb-4"><?= $successMessage ?></p>
-            <div class="flex justify-center space-x-4">
-                <a href="./mycourses.php" class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
-                    Go to My Courses
-                </a>
-                <a href="./courses.php" class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
-                    Enroll in New Course
-                </a>
-            </div>
-        <?php elseif (isset($errorMessage)): ?>
-            <div>
-                <img src="../assets/images/warning.png" height="400" width="400" class="mx-auto">
-                <p class="text-red-700 text-xl font-bold mb-4"><?= htmlspecialchars($errorMessage) ?></p>
-            </div>
-            <div class="flex justify-center w-full ">
-                <a href="./courses.php"
-                    class="px-6 mt-2 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
-                    Go Back To Courses
-                </a>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+        </section>
 
 
 

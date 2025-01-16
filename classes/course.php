@@ -83,9 +83,10 @@ class Course
         return null;
     }
 
-    public function getInstructorInfo($instructorId) {
+    public function getInstructorInfo($instructorId)
+    {
         $connection = $this->db->getConnection();
-    
+
         $query = "SELECT u.username, u.avatarImg, u.bio, u.poste, 
                          COUNT(DISTINCT e.studentId) AS total_students,
                          COUNT(DISTINCT c.id) AS total_courses
@@ -94,19 +95,36 @@ class Course
                   LEFT JOIN enrollment e ON c.id = e.courseId
                   WHERE u.id = ?
                   GROUP BY u.id";
-    
+
         $stmt = $connection->prepare($query);
         $stmt->bind_param("i", $instructorId);
         $stmt->execute();
         $result = $stmt->get_result();
-    
+
         if ($result->num_rows > 0) {
             return $result->fetch_assoc();
         }
-    
-        return null; // Return null if no instructor found
+
+        return null;
     }
-    
+
+    public function isUserEnrolled($studentId, $courseId)
+    {
+        $connection = $this->db->getConnection();
+        $query = "SELECT COUNT(*) as count FROM enrollment WHERE studentId = ? AND courseId = ?";
+        if ($stmt = $connection->prepare($query)) {
+            $stmt->bind_param("ii", $studentId, $courseId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = $result->fetch_assoc();
+            $stmt->close();
+            return $data['count'] > 0;
+        } else {
+            throw new Exception("Failed to prepare the query: " . $connection->error);
+        }
+    }
+
+
 
 
 

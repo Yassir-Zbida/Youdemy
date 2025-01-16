@@ -4,8 +4,16 @@ require_once(__DIR__ . '/user.php');
 
 class Student extends User {
 
+    private $myCourses = [];
+    private function setMyCourses(array $courses) {
+        $this->myCourses = $courses;
+    }
+    public function getMyCourses() {
+        return $this->myCourses;
+    }
+
     public function performAction(){
-        return "hey" ;
+        return "Test" ;
     }
 
     public function __construct($db) {
@@ -86,6 +94,33 @@ class Student extends User {
             return "Failed to enroll the student: " . $stmt->error;
         }
     }
+
+    public function getEnrolledCourses($studentId) {
+        $connection = $this->db->getConnection(); 
+        $query = "SELECT courses.*, users.username AS instructorName 
+              FROM courses
+              JOIN enrollment ON courses.id = enrollment.courseId
+              JOIN users ON courses.instructorId = users.id
+              WHERE enrollment.studentId = ?";
+    
+        if ($stmt = $connection->prepare($query)) { 
+            $stmt->bind_param("i", $studentId);
+            $stmt->execute();
+    
+            $result = $stmt->get_result();
+            $courses = [];
+    
+            while ($course = $result->fetch_assoc()) {
+                $courses[] = $course;
+            }
+    
+            $this->setMyCourses($courses);
+            $stmt->close();
+        } else {
+            throw new Exception("Failed to prepare the query: " . $connection->error);
+        }
+    }
+    
  
 }
 ?>

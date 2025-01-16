@@ -6,45 +6,43 @@ session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
 $menuItems = User::getMenuItems($userRole);
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("Invalid course ID");
+}
 
-$db = new Database();
-$course = new Course($db);
+$courseId = intval($_GET['id']);
+$course = new Course();
+$courseDetails = $course->getCourseById($courseId);
+$instructorId = $courseDetails['instructorId'];
+$instructorInfo = $course->getInstructorInfo($instructorId);
+$studentId = $_SESSION['user_id'];
 
-$limit = 6;
-$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$page = max($page, 1);
-$offset = ($page - 1) * $limit;
+if (!$course->isUserEnrolled($studentId, $courseId)) {
+    header('Location: ./courses.php');
+    exit; 
+}
 
-$courses = $course->browseCourses($db, $limit, $offset);
-$totalCourses = $course->countCourses($db);
+if (!$courseDetails) {
+    die("Course not found");
+}
 
-$totalPages = ceil($totalCourses / $limit);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youdemy Platform</title>
+    <title>Course - <?= htmlspecialchars($courseDetails['title']) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
     <script src="../assets/scripts/main.js" defer></script>
-    <style>
-        .text-gradient {
-            background: linear-gradient(to right, #f2b212, #fadf10);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- main container -->
+    <!-- Header container -->
     <div class="flex flex-col">
 
         <div class="hidden md:block w-full bg-[#f2b212] text-white">
@@ -104,69 +102,129 @@ $totalPages = ceil($totalCourses / $limit);
         </header>
     </div>
 
-    <!-- Courses Grid Section -->
-    <section>
-        <div class="py-10 md:px-12 px-6">
-            <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
-                Explore Our <span
-                    class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php if (!empty($courses)): ?>
-                    <?php foreach ($courses as $course): ?>
-                        <div
-                            class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
-                            <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image"
-                                class="rounded-t-lg w-full">
-                            <div class="py-3">
-                                <p class="text-sm text-gray-500 flex items-center space-x-2">Created By <span
-                                        class="font-bold ml-1"><?= htmlspecialchars($course['instructor_name']) ?></span>
-                                </p>
-                                <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?>
-                                </h3>
-                                <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
-                                <div class="flex items-center justify-between mt-3">
-                                    <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
-                                    <button class="font-bold underline text-yellow-400">
-                                        <a href="course-preview.php?id=<?= htmlspecialchars($course['course_id']); ?>">Preview
-                                            Course</a>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-center text-gray-500">No courses available at the moment.</p>
-                <?php endif; ?>
+
+    <div class="sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+            <a href="../index.php" class="hover:text-gray-700">Home</a>
+            <i class="ri-arrow-right-s-line"></i>
+            <a href="../pages/mycourses.php" class="hover:text-gray-700">My Courses</a>
+            <i class="ri-arrow-right-s-line"></i>
+            <span class="text-gray-700"><?= htmlspecialchars($courseDetails['title']) ?></span>
+        </div>
+    </div>
+
+    <div class="sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+            <div class="flex">
+                <div class="rounded-lg overflow-hidden flex-grow">
+                    <img src="../uploads/thumbnails/<?= htmlspecialchars($courseDetails['thumbnail']) ?>"
+                        alt="<?= htmlspecialchars($courseDetails['title']) ?>"
+                        class="rounded-lg h-full object-cover w-full">
+                </div>
             </div>
 
-            <div class="flex justify-center mt-6">
-                <nav class="inline-flex items-center space-x-2">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?>"
-                            class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Previous</a>
-                    <?php endif; ?>
+            <div class="flex flex-col justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-6"><?= htmlspecialchars($courseDetails['title']) ?></h1>
+                    <div class="text-4xl font-bold mb-8 text-yellow-400">
+                        <?= htmlspecialchars($courseDetails['price']) ?><span class="text-sm font-normal">USD</span>
+                    </div>
 
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <a href="?page=<?= $i ?>"
-                            class="px-4 py-2 <?= $i == $page ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-800' ?> rounded-lg hover:bg-yellow-400 hover:text-white"><?= $i ?></a>
-                    <?php endfor; ?>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-layout-grid-line"></i>
+                                <span>Category</span>
+                            </div>
+                            <span><?= htmlspecialchars($courseDetails['category_name'] ?? 'General') ?></span>
+                        </div>
 
-                    <?php if ($page < $totalPages): ?>
-                        <a href="?page=<?= $page + 1 ?>"
-                            class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Next</a>
-                    <?php endif; ?>
-                </nav>
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-signal-tower-line"></i>
+                                <span>Difficulty</span>
+                            </div>
+                            <span><?= htmlspecialchars($courseDetails['Difficulty'] ?? 'Unknown') ?></span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-user-line"></i>
+                                <span>Students</span>
+                            </div>
+                            <span><?= htmlspecialchars($courseDetails['student_count'] ?? '0') ?></span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b">
+                            <div class="flex items-center gap-2">
+                                <i class="ri-time-line"></i>
+                                <span>Duration</span>
+                            </div>
+                            <span><?= htmlspecialchars($courseDetails['Duration'] ?? 'Unknown') ?></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button
+                        class="md:mt-6 flex-1 bg-yellow-400 text-white py-3 font-bold text-lg rounded-lg hover:bg-gray-800">
+                        <a href="enroll.php?courseId=<?= urlencode($courseId) ?>">Enroll Now</a>
+                    </button>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
 
+    <div class="sm:px-6 lg:px-8 py-4 mt-12">
+        <div class="bg-red-600 shadow-sm border rounded-lg bg-white p-4 py-6 pl-8">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">Course Description</h2>
+            <div class="prose max-w-none">
+                <p class="text-gray-600 leading-relaxed">
+                    <?= htmlspecialchars($courseDetails['description']) ?>
+                </p>
+            </div>
+        </div>
 
+        <div class="border rounded-lg bg-white p-4 py-6 mt-12 pl-8">
+            <div class="flex justify-between items-center space-x-4">
+                <div class="w-[15%]">
+                    <img src="../uploads/avatars/<?php echo htmlspecialchars(isset($instructorInfo['avatarImg']) && $instructorInfo['avatarImg'] !== null ? $instructorInfo['avatarImg'] : 'simple.png'); ?>"
+                        class="rounded-full w-32 h-32 object-cover">
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-black">
+                        <?php echo htmlspecialchars($instructorInfo['username']); ?>
+                    </h3>
+                    <p class="text-gray-500 mt-2">
+                        <?php echo htmlspecialchars(isset($instructorInfo['poste']) && $instructorInfo['poste'] !== null ? $instructorInfo['poste'] : 'Instructor'); ?>
+                    </p>
+                    <div class="flex items-center space-x-4 mt-2 text-gray-600">
+                        <div class="flex items-center">
+                            <i class="ri-user-3-line mr-1 text-yellow-400"></i>
+                            <span><?php echo htmlspecialchars($instructorInfo['total_students']); ?> Students</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-video-line mr-1 text-yellow-400"></i>
+                            <span><?php echo $instructorInfo['total_courses']; ?> Courses</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mt-4 leading-relaxed">
+                        <?php
+                        echo nl2br(htmlspecialchars(
+                            isset($instructorInfo['bio']) && $instructorInfo['bio'] !== null
+                            ? $instructorInfo['bio']
+                            : 'Youdemy Instructor: A passionate educator dedicated to helping learners achieve their goals through engaging and insightful courses. With expertise in various fields, our instructors bring a wealth of knowledge and experience to empower students worldwide.'
+                        ));
+                        ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 
 
     <!-- Footer Section -->
-
     <footer class="bg-yellow-10 py-16 ">
         <div class="px-10">
             <div class="mb-16">
@@ -272,7 +330,5 @@ $totalPages = ceil($totalCourses / $limit);
     </footer>
 
 </body>
-
-
 
 </html>
