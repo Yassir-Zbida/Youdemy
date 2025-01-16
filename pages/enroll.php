@@ -1,24 +1,48 @@
 <?php
 require_once '../classes/user.php';
 require_once '../classes/course.php';
+require_once '../classes/db.php';
 
 session_start();
+$db = new Database();
 $isLoggedIn = isset($_SESSION['user_id']);
+
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ./login.php');
+    exit();
+}
+
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
 $menuItems = User::getMenuItems($userRole);
 
-$db = new Database();
-$course = new Course($db);
+$studentId = $_SESSION['user_id'];
+$courseId = isset($_GET['courseId']) ? intval($_GET['courseId']) : 0;
 
-$limit = 6;
-$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$page = max($page, 1);
-$offset = ($page - 1) * $limit;
+if ($courseId <= 0) {
+    header('Location: ./courses.php');
+    exit();
+}
 
-$courses = $course->browseCourses($db, $limit, $offset);
-$totalCourses = $course->countCourses($db);
+$student = new Student($db);
 
-$totalPages = ceil($totalCourses / $limit);
+$enrollResult = $student->enroll($studentId, $courseId);
+
+if ($enrollResult === true) {
+    $successMessage = "You have successfully enrolled in the course!";
+    $showSuccess = true;  
+} else {
+    $errorMessage = $enrollResult;
+    $showSuccess = false; 
+}
+
+
+// if ($enrollResult === true) {
+//     $successMessage = "You have successfully enrolled in the course!";
+//     exit();
+// } else {
+//     $errorMessage = $enrollResult;
+// }
 ?>
 
 
@@ -28,11 +52,11 @@ $totalPages = ceil($totalCourses / $limit);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youdemy Platform</title>
+    <title>Youdemy Platform </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
-    <script src="../assets/scripts/main.js" defer></script>
+    <script src="./assets/scripts/main.js" defer></script>
     <style>
         .text-gradient {
             background: linear-gradient(to right, #f2b212, #fadf10);
@@ -44,8 +68,7 @@ $totalPages = ceil($totalCourses / $limit);
 
 <body>
 
-    <!-- main container -->
-    <div class="flex flex-col">
+    <div class="min-h-screen flex flex-col">
 
         <div class="hidden md:block w-full bg-[#f2b212] text-white">
             <div class="container mx-auto px-4 py-2">
@@ -91,7 +114,7 @@ $totalPages = ceil($totalCourses / $limit);
                             </button>
                         <?php else: ?>
                             <button
-                                class="p-2 px-4 bg-red-400 text-white rounded-full hover:bg-white hover:text-red-400 hover:border hover:border-red-400 transition-colors">
+                                class="p-2 px-4 bg-red-700 text-white rounded-full hover:bg-white hover:text-red-700 hover:border hover:border-red-700 transition-colors">
                                 <a href="./logout.php">Logout</a>
                             </button>
                         <?php endif; ?>
@@ -102,70 +125,48 @@ $totalPages = ceil($totalCourses / $limit);
                 </div>
             </div>
         </header>
+
+        <!--Enrollment Status -->
+        <section class="hero flex flex-col items-center text-center justify-center mt-24">
+    <div class="mb-6">
+        <?php if ($showSuccess): ?>
+            <div>
+                <img src="../assets/images/success.png" alt="Success" height="400" width="400" class="mx-auto">
+            </div>
+            <p class="text-xl font-semibold text-green-600 mb-4"><?= $successMessage ?></p>
+            <div class="flex justify-center space-x-4">
+                <a href="./mycourses.php" class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                    Go to My Courses
+                </a>
+                <a href="./courses.php" class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                    Enroll in New Course
+                </a>
+            </div>
+        <?php elseif (isset($errorMessage)): ?>
+            <div>
+                <img src="../assets/images/warning.png" height="400" width="400" class="mx-auto">
+                <p class="text-red-700 text-xl font-bold mb-4"><?= htmlspecialchars($errorMessage) ?></p>
+            </div>
+            <div class="flex justify-center w-full ">
+                <a href="./courses.php"
+                    class="px-6 mt-2 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-500 transition">
+                    Go Back To Courses
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
+
+
+
+
     </div>
 
-    <!-- Courses Grid Section -->
-    <section>
-        <div class="py-10 md:px-12 px-6">
-            <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
-                Explore Our <span
-                    class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php if (!empty($courses)): ?>
-                    <?php foreach ($courses as $course): ?>
-                        <div
-                            class="bg-white border border-yellow-400 rounded-lg shadow-md p-4 hover:scale-105 transition-transform">
-                            <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']); ?>" alt="Course Image"
-                                class="rounded-t-lg w-full">
-                            <div class="py-3">
-                                <p class="text-sm text-gray-500 flex items-center space-x-2">Created By <span
-                                        class="font-bold ml-1"><?= htmlspecialchars($course['instructor_name']) ?></span>
-                                </p>
-                                <h3 class="text-lg font-semibold text-gray-800 mt-2"><?= htmlspecialchars($course['title']); ?>
-                                </h3>
-                                <p class="text-gray-600 text-sm mt-1"><?= htmlspecialchars($course['description']); ?></p>
-                                <div class="flex items-center justify-between mt-3">
-                                    <p class="text-yellow-400 font-bold"><?= htmlspecialchars($course['price']); ?> $</p>
-                                    <button class="font-bold underline text-yellow-400">
-                                        <a href="course-preview.php?id=<?= htmlspecialchars($course['course_id']); ?>">View
-                                            Course</a>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-center text-gray-500">No courses available at the moment.</p>
-                <?php endif; ?>
-            </div>
-
-            <div class="flex justify-center mt-6">
-                <nav class="inline-flex items-center space-x-2">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?>"
-                            class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Previous</a>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <a href="?page=<?= $i ?>"
-                            class="px-4 py-2 <?= $i == $page ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-800' ?> rounded-lg hover:bg-yellow-400 hover:text-white"><?= $i ?></a>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $totalPages): ?>
-                        <a href="?page=<?= $page + 1 ?>"
-                            class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">Next</a>
-                    <?php endif; ?>
-                </nav>
-            </div>
-        </div>
-    </section>
-
-
-
+    </div>
 
 
     <!-- Footer Section -->
+
     <footer class="bg-yellow-10 py-16 ">
         <div class="px-10">
             <div class="mb-16">

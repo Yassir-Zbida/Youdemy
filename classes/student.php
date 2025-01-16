@@ -8,7 +8,6 @@ class Student extends User {
         return "hey" ;
     }
 
-
     public function __construct($db) {
         $this->db = $db;
         $this->role = 'Student';
@@ -30,7 +29,6 @@ class Student extends User {
         $usernameExists = 0; 
         $emailExists = 0;
     
-        // Check if username exists
         $stmt = $connection->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -38,7 +36,6 @@ class Student extends User {
         $stmt->fetch();
         $stmt->close();
     
-        // Check if email exists
         $stmt = $connection->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -47,11 +44,11 @@ class Student extends User {
         $stmt->close();
     
         if ($usernameExists > 0) {
-            return "Username '$username' is already taken.";
+            return "Username '$username' is already taken";
         }
     
         if ($emailExists > 0) {
-            return "Email '$email' is already in use.";
+            return "Email '$email' is already in use";
         }
     
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -62,11 +59,33 @@ class Student extends User {
         if ($stmt->execute()) {
             return true;
         } else {
-            return "There was an error registering the user.";
+            return "There was an error registering the user";
         }
     }
-    
 
+    public function enroll($studentId, $courseId) {
+        $connection = $this->db->getConnection();
     
+        $checkQuery = "SELECT * FROM enrollment WHERE studentId = ? AND courseId = ?";
+        $stmt = $connection->prepare($checkQuery);
+        $stmt->bind_param("ii", $studentId, $courseId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            return "You are already enrolled in this course"; 
+        }
+    
+        $insertQuery = "INSERT INTO enrollment (studentId, courseId, enrollmentDate) VALUES (?, ?, NOW())";
+        $stmt = $connection->prepare($insertQuery);
+        $stmt->bind_param("ii", $studentId, $courseId);
+    
+        if ($stmt->execute()) {
+            return true; 
+        } else {
+            return "Failed to enroll the student: " . $stmt->error;
+        }
+    }
+ 
 }
 ?>

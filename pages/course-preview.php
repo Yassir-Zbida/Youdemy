@@ -15,6 +15,7 @@ $course = new Course();
 $courseDetails = $course->getCourseById($courseId);
 $instructorId = $courseDetails['instructorId'];
 $instructorInfo = $course->getInstructorInfo($instructorId);
+$studentId = $_SESSION['user_id'];
 
 if (!$courseDetails) {
     die("Course not found");
@@ -160,7 +161,7 @@ if (!$courseDetails) {
                 <div class="flex gap-4">
                     <button
                         class="md:mt-6 flex-1 bg-yellow-400 text-white py-3 font-bold text-lg rounded-lg hover:bg-gray-800">
-                        Enroll Now
+                        <a href="enroll.php?courseId=<?= urlencode($courseId) ?>">Enroll Now</a>
                     </button>
                 </div>
             </div>
