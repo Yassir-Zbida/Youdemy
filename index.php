@@ -130,7 +130,6 @@ $grid_courses = array_slice($courses, 0, 6);
         </section>
     </div>
 
-
     <!-- Courses Categories Section  -->
     <section class="py-16 px-4 bg-white">
         <div class="max-w-6xl mx-auto">

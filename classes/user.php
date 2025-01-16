@@ -120,10 +120,8 @@ abstract class User
 
     public static function redirectIfLoggedIn()
     {
-        session_start();
 
         if (isset($_SESSION['user_id'])) {
-            // If logged in, redirect to index.php
             header("Location: ../index.php");
             exit();
         }
