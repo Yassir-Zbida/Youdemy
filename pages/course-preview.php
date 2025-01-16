@@ -6,6 +6,18 @@ session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
 $menuItems = User::getMenuItems($userRole);
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("Invalid course ID.");
+}
+
+$courseId = intval($_GET['id']);
+var_dump($courseId);
+$course = new Course();
+$courseDetails = $course->getCourseById($courseId);
+
+if (!$courseDetails) {
+    die("Course not found.");
+}
 
 ?>
 <!DOCTYPE html>
@@ -14,7 +26,7 @@ $menuItems = User::getMenuItems($userRole);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course - </title>
+    <title>Course - <?= htmlspecialchars($courseDetails['title']) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
@@ -90,7 +102,7 @@ $menuItems = User::getMenuItems($userRole);
             <i class="ri-arrow-right-s-line"></i>
             <a href="../courses.php" class="hover:text-gray-700">Courses</a>
             <i class="ri-arrow-right-s-line"></i>
-            <span class="text-gray-700">Advanced 3D Modelling in Blender</span>
+            <span class="text-gray-700"><?= htmlspecialchars($courseDetails['title']) ?></span>
         </div>
     </div>
 
@@ -98,36 +110,44 @@ $menuItems = User::getMenuItems($userRole);
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
                 <div class="rounded-lg overflow-hidden">
-                    <img src="../uploads/thumbnails/course-04.jpg" alt="Course thumbnail" class="w-full">
+                    <img src="../uploads/thumbnails/<?= htmlspecialchars($courseDetails['thumbnail']) ?>" alt="<?= htmlspecialchars($courseDetails['title']) ?>" class="rounded-lg">
                 </div>
             </div>
 
             <div>
-                <h1 class="text-3xl font-bold mb-6">Advanced 3D Modelling in Blender</h1>
-                <div class="text-4xl font-bold mb-8 text-yellow-400">49.99 <span class="text-sm font-normal">USD</span>
+                <h1 class="text-3xl font-bold mb-6"><?= htmlspecialchars($courseDetails['title']) ?></h1>
+                <div class="text-4xl font-bold mb-8 text-yellow-400"><?= htmlspecialchars($courseDetails['price']) ?><span class="text-sm font-normal">USD</span>
                 </div>
 
                 <div class="space-y-4 mb-8">
                     <div class="flex items-center justify-between py-2 border-b">
                         <div class="flex items-center gap-2">
+                            <i class="ri-layout-grid-line"></i>
+                            <span>Category</span>
+                        </div>
+                        <span><?= htmlspecialchars($courseDetails['category_name'] ?? 'General') ?></span>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2 border-b">
+                        <div class="flex items-center gap-2">
                             <i class="ri-signal-tower-line"></i>
                             <span>Difficulty</span>
                         </div>
-                        <span>Moderate</span>
+                        <span><?= htmlspecialchars($courseDetails['Difficulty'] ?? 'Unknown') ?></span>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b">
                         <div class="flex items-center gap-2">
                             <i class="ri-user-line"></i>
                             <span>Students</span>
                         </div>
-                        <span>3,215</span>
+                        <span><?= htmlspecialchars($courseDetails['student_count'] ?? '0') ?></span>
                     </div>
                     <div class="flex items-center justify-between py-2 border-b">
                         <div class="flex items-center gap-2">
                             <i class="ri-time-line"></i>
                             <span>Duration</span>
                         </div>
-                        <span>8h 23m</span>
+                        <span><?= htmlspecialchars($courseDetails['Duration'] ?? 'Unknown') ?></span>
                     </div>
                 </div>
 
