@@ -107,17 +107,19 @@ $grid_courses = array_slice($courses, 0, 6);
                     <p class="text-gray-600 md:text-lg">
                         Empower Your Mind with World-Class Learning – Join Youdemy Today
                     </p>
-
+                    
+                    <!-- Search Form -->
                     <div class="mt-8">
-                        <div class="relative">
-                            <input type="text" placeholder="What Do You Need To Learn?"
+                        <form action="./pages/search.php" method="GET" class="relative">
+                            <input type="text" name="query" placeholder="What Do You Need To Learn?"
                                 class="w-full p-3 pl-4 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500">
-                            <button
-                                class="bg-yellow-400 absolute right-1 top-1 bottom-1 px-4 bg-bg-yellow-500 text-white rounded-full hover:bg-bg-yellow-500">
+                            <button type="submit"
+                                class="bg-yellow-400 absolute right-1 top-1 bottom-1 px-4 text-white rounded-full hover:bg-yellow-500">
                                 Search
                             </button>
-                        </div>
+                        </form>
                     </div>
+
                     <div class="flex items-center flex justify-center space-x-2">
                         <span class="text-yellow-400 text-xl">
                             <i class="ri-star-fill"></i>

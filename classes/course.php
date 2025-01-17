@@ -123,6 +123,46 @@ class Course
         }
     }
 
+    public function search($searchTerm)
+    {
+        $connection = $this->db->getConnection();
+        $searchTerm = $connection->real_escape_string($searchTerm);
+
+        $query = "SELECT 
+              c.id AS course_id, 
+              c.title, 
+              c.description, 
+              c.price, 
+              c.thumbnail,
+              u.username AS instructor_name,
+              cat.name AS category_name
+          FROM courses c
+          LEFT JOIN users u ON c.instructorId = u.id
+          LEFT JOIN categories cat ON c.categoryId = cat.id
+          WHERE c.title LIKE ? 
+             OR c.description LIKE ? 
+             OR u.username LIKE ?
+             OR cat.name LIKE ?
+          LIMIT 20";
+
+        $stmt = $connection->prepare($query);
+        $searchWildcard = '%' . $searchTerm . '%';
+        $stmt->bind_param("ssss", $searchWildcard, $searchWildcard, $searchWildcard, $searchWildcard);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $courses = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $courses[] = $row;
+            }
+        }
+        $stmt->close();
+        return $courses;
+    }
+
+
     public function addCourse()
     {
     }

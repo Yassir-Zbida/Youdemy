@@ -132,9 +132,6 @@ $courses = $student->getMyCourses();
         </div>
     </section>
 
-
-
-
     <!-- Footer Section -->
 
     <footer class="bg-yellow-10 py-16 ">
@@ -242,7 +239,4 @@ $courses = $student->getMyCourses();
     </footer>
 
 </body>
-
-
-
 </html>
