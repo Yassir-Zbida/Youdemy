@@ -36,7 +36,7 @@ $grid_courses = array_slice($courses, 0, 6);
 
 <body>
 
-    <!-- main container -->
+<!-- main container -->
     <div class="min-h-screen flex flex-col">
 
         <div class="hidden md:block w-full bg-[#f2b212] text-white">
@@ -107,7 +107,7 @@ $grid_courses = array_slice($courses, 0, 6);
                     <p class="text-gray-600 md:text-lg">
                         Empower Your Mind with World-Class Learning – Join Youdemy Today
                     </p>
-                    
+
                     <!-- Search Form -->
                     <div class="mt-8">
                         <form action="./pages/search.php" method="GET" class="relative">
