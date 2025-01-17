@@ -127,12 +127,6 @@ class Course
     {
     }
 
-    public function displayCourse()
-    {
-    }
-
-
-
     public function __destruct()
     {
         $this->db->closeConnection();

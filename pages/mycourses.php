@@ -5,7 +5,6 @@ User::isLoggedIn();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
 $menuItems = User::getMenuItems($userRole);
-var_dump($userRole);
 if ($userRole !== 'Student') {
     header('Location: ../index.php');
     exit; 
@@ -107,7 +106,7 @@ $courses = $student->getMyCourses();
     <section>
         <div class="py-10 md:px-12 px-6">
             <h2 class="text-4xl font-bold text-gray-800 mb-6 text-center md:mb-11">
-                Explore Our <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
+                Explore Your <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">Courses</span>
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php if (!empty($courses)): ?>

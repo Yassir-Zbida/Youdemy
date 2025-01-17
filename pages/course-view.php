@@ -1,7 +1,6 @@
 <?php
 require_once '../classes/user.php';
 require_once '../classes/course.php';
-require_once '../classes/videocourse.php';
 
 
 session_start();
@@ -202,7 +201,7 @@ if (!$courseDetails) {
         <h3 class="font-semibold mb-2 text-xl pb-3 border-b text-yellow-400 mb-3">Course Video</h3>
         <div class="relative aspect-video rounded-lg overflow-hidden ">
             <video controls poster="../uploads/thumbnails/<?= htmlspecialchars($courseDetails['thumbnail']) ?>">
-                <source src="../CSS.mp4" type="video/mp4">
+                <source src="../uploads/videos/<?= htmlspecialchars($courseDetails['videoUrl']) ?>" type="video/mp4">
             </video>
         </div>
     </div>
@@ -269,14 +268,14 @@ if (!$courseDetails) {
     </div>
 </div>
 <?php elseif ($courseType === 'document'): ?>
-    
+
 <!-- Course Document Section -->
 <div class="sm:px-6 lg:px-8 py-4 w-full flex gap-4">
     <!-- document view -->
     <div class="w-[70%] border p-2 rounded-lg shadow-sm px-6 pb-8 pt-6">
-        <h3 class="font-semibold mb-2 text-xl pb-3 border-b text-yellow-400 mb-3">Course Document</h3>
+        <h3 class="font-semibold text-xl pb-3 border-b text-yellow-400 mb-5">Course Document</h3>
         <div class="relative aspect-video rounded-lg overflow-hidden ">
-            <iframe src="../uploads/documents/example.pdf" width="100%" height="600px"></iframe>
+            <iframe src="../uploads/documents/<?= htmlspecialchars($courseDetails['document']) ?>" width="100%" height="600px"></iframe>
         </div>
     </div>
     <!-- sidebar -->
