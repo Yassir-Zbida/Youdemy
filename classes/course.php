@@ -3,20 +3,19 @@ require_once(__DIR__ . '/db.php');
 
 class Course
 {
-    private $db;
-    private $id;
-    private $instructorId;
-    private $title;
-    private $description;
-    private $price;
-    private $categoryId;
-    private $thumbnail;
-    private $content;
-    private $videoUrl;
-    private $Duration;
-    private $Difficulty;
-    private $createdDate;
-    private $studentCount;
+    protected $db;
+    protected $id;
+    protected $instructorId;
+    protected $title;
+    protected $description;
+    protected $price;
+    protected $categoryId;
+    protected $thumbnail;
+    protected $content;
+    protected $createdDate;
+    protected $studentCount;
+    protected $Duration;
+    protected $Difficulty;
 
     public function __construct()
     {
@@ -124,7 +123,11 @@ class Course
         }
     }
 
+    public function addCourse(){
+    }
 
+    public function displayCourse(){
+    }
 
 
 

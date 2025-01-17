@@ -1,6 +1,8 @@
 <?php
 require_once '../classes/user.php';
 require_once '../classes/course.php';
+require_once '../classes/videocourse.php';
+
 
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -19,8 +21,9 @@ $studentId = $_SESSION['user_id'];
 
 if (!$course->isUserEnrolled($studentId, $courseId)) {
     header('Location: ./courses.php');
-    exit; 
+    exit;
 }
+
 
 if (!$courseDetails) {
     die("Course not found");
@@ -41,6 +44,83 @@ if (!$courseDetails) {
 </head>
 
 <body>
+    <style>
+        #toolbarContainer .toolbarButton,
+        #toolbarContainer .splitToolbarButton,
+        #toolbarContainer .dropdownToolbarButton,
+        #toolbarContainer .secondaryToolbarButton {
+            display: none !important;
+        }
+
+        #toolbarContainer #pageNumber,
+        #toolbarContainer #numPages,
+        #toolbarContainer #zoomIn,
+        #toolbarContainer #zoomOut,
+        #toolbarContainer #previous,
+        #toolbarContainer #next {
+            display: inline-block !important;
+        }
+
+        #viewerContainer,
+        #mainContainer,
+        .pdfViewer {
+            background-color: #f5f5f5 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        .page {
+            border: none !important;
+            margin: 10px auto !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            width: 90% !important;
+            max-width: 1200px !important;
+        }
+
+        #outerContainer {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        #toolbarContainer {
+            background-color: #333 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            width: 100% !important;
+        }
+
+        #pageNumber {
+            background-color: transparent !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        #download,
+        #print {
+            display: none !important;
+        }
+
+        #viewerContainer::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #viewerContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #viewerContainer::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        #viewerContainer::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .pdfViewer .page {
+            margin: 1px auto -8px auto !important;
+            scale: 1 !important;
+        }
+    </style>
 
     <!-- Header container -->
     <div class="flex flex-col">
@@ -102,7 +182,7 @@ if (!$courseDetails) {
         </header>
     </div>
 
-
+    <!-- Breadcrumbs -->
     <div class="sm:px-6 lg:px-8 py-4">
         <div class="flex items-center space-x-2 text-sm text-gray-500">
             <a href="../index.php" class="hover:text-gray-700">Home</a>
@@ -113,115 +193,174 @@ if (!$courseDetails) {
         </div>
     </div>
 
-    <div class="sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
-            <div class="flex">
-                <div class="rounded-lg overflow-hidden flex-grow">
-                    <img src="../uploads/thumbnails/<?= htmlspecialchars($courseDetails['thumbnail']) ?>"
-                        alt="<?= htmlspecialchars($courseDetails['title']) ?>"
-                        class="rounded-lg h-full object-cover w-full">
-                </div>
+    <!--  course video section  -->
+    <div class="sm:px-6 lg:px-8 py-4 w-full flex gap-4">
+        <!-- video view -->
+        <div class="w-[70%] border p-2 rounded-lg shadow-sm px-6 pb-8 pt-6">
+            <h3 class="font-semibold mb-2 text-xl pb-3 border-b text-yellow-400 mb-3">Course Video</h3>
+            <div class="relative aspect-video rounded-lg overflow-hidden ">
+                <video controls poster="../uploads/thumbnails/<?= htmlspecialchars($courseDetails['thumbnail']) ?>">
+                    <source src="../CSS.mp4" type="video/mp4">
+                </video>
             </div>
+        </div>
+        <!-- sidebar -->
+        <div class="w-[30%]">
+            <div>
+                <div class="bg-white rounded-lg border shadow-sm p-6 ">
+                    <div>
+                        <div class="mb-8">
+                            <h3 class="font-semibold mb-2 text-xl border-b pb-3 text-yellow-400">Course Info
+                            </h3>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-layout-grid-line text-yellow-400"></i>
+                                    <span>Category</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['category_name'] ?? 'General') ?></span>
+                            </div>
 
-            <div class="flex flex-col justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold mb-6"><?= htmlspecialchars($courseDetails['title']) ?></h1>
-                    <div class="text-4xl font-bold mb-8 text-yellow-400">
-                        <?= htmlspecialchars($courseDetails['price']) ?><span class="text-sm font-normal">USD</span>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-signal-tower-line text-yellow-400"></i>
+                                    <span>Difficulty</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['Difficulty'] ?? 'Unknown') ?></span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-user-line text-yellow-400"></i>
+                                    <span>Students</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['student_count'] ?? '0') ?></span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-time-line text-yellow-400"></i>
+                                    <span>Duration</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['Duration'] ?? 'Unknown') ?></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold mb-2 text-xl pb-3 text-yellow-400">Resources</h3>
+                            <div class="space-y-2 mb-8">
+                                <button
+                                    class="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100">
+                                    <i class="ri-download-cloud-line"></i>
+                                    <span>Download Course</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold mb-2 text-xl border-b pb-3 text-yellow-400">Instructor
+                                </h3>
+                                <div class="flex items-center space-x-3 ">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center">
+                                        <img src="../uploads/avatars/<?php echo htmlspecialchars(isset($instructorInfo['avatarImg']) && $instructorInfo['avatarImg'] !== null ? $instructorInfo['avatarImg'] : 'simple.png'); ?>"
+                                            class="rounded-full object-cover">
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">
+                                            <?php echo htmlspecialchars($instructorInfo['username']); ?>
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            <?php echo htmlspecialchars(isset($instructorInfo['poste']) && $instructorInfo['poste'] !== null ? $instructorInfo['poste'] : 'Instructor'); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center gap-2">
-                                <i class="ri-layout-grid-line"></i>
-                                <span>Category</span>
-                            </div>
-                            <span><?= htmlspecialchars($courseDetails['category_name'] ?? 'General') ?></span>
-                        </div>
-
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center gap-2">
-                                <i class="ri-signal-tower-line"></i>
-                                <span>Difficulty</span>
-                            </div>
-                            <span><?= htmlspecialchars($courseDetails['Difficulty'] ?? 'Unknown') ?></span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center gap-2">
-                                <i class="ri-user-line"></i>
-                                <span>Students</span>
-                            </div>
-                            <span><?= htmlspecialchars($courseDetails['student_count'] ?? '0') ?></span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b">
-                            <div class="flex items-center gap-2">
-                                <i class="ri-time-line"></i>
-                                <span>Duration</span>
-                            </div>
-                            <span><?= htmlspecialchars($courseDetails['Duration'] ?? 'Unknown') ?></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <button
-                        class="md:mt-6 flex-1 bg-yellow-400 text-white py-3 font-bold text-lg rounded-lg hover:bg-gray-800">
-                        <a href="enroll.php?courseId=<?= urlencode($courseId) ?>">Enroll Now</a>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <div class="sm:px-6 lg:px-8 py-4 mt-12">
-        <div class="bg-red-600 shadow-sm border rounded-lg bg-white p-4 py-6 pl-8">
-            <h2 class="text-2xl font-bold mb-4 text-yellow-400">Course Description</h2>
-            <div class="prose max-w-none">
-                <p class="text-gray-600 leading-relaxed">
-                    <?= htmlspecialchars($courseDetails['description']) ?>
-                </p>
+    <!-- course document section -->
+    <div class="sm:px-6 lg:px-8 py-4 w-full flex gap-4">
+        <!-- video view -->
+        <div class="w-[70%] border p-2 rounded-lg shadow-sm px-6 pb-8 pt-6">
+            <h3 class="font-semibold mb-2 text-xl pb-3 border-b text-yellow-400 mb-3">Course Document</h3>
+            <div class="relative aspect-video rounded-lg overflow-hidden ">
+                 <iframe src="../uploads/documents/example.pdf" width="100%" height="600px"></iframe>
             </div>
         </div>
+        <!-- sidebar -->
+        <div class="w-[30%]">
+            <div>
+                <div class="bg-white rounded-lg border shadow-sm p-6 ">
+                    <div>
+                        <div class="mb-8">
+                            <h3 class="font-semibold mb-2 text-xl border-b pb-3 text-yellow-400">Course Info
+                            </h3>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-layout-grid-line text-yellow-400"></i>
+                                    <span>Category</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['category_name'] ?? 'General') ?></span>
+                            </div>
 
-        <div class="border rounded-lg bg-white p-4 py-6 mt-12 pl-8">
-            <div class="flex justify-between items-center space-x-4">
-                <div class="w-[15%]">
-                    <img src="../uploads/avatars/<?php echo htmlspecialchars(isset($instructorInfo['avatarImg']) && $instructorInfo['avatarImg'] !== null ? $instructorInfo['avatarImg'] : 'simple.png'); ?>"
-                        class="rounded-full w-32 h-32 object-cover">
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-black">
-                        <?php echo htmlspecialchars($instructorInfo['username']); ?>
-                    </h3>
-                    <p class="text-gray-500 mt-2">
-                        <?php echo htmlspecialchars(isset($instructorInfo['poste']) && $instructorInfo['poste'] !== null ? $instructorInfo['poste'] : 'Instructor'); ?>
-                    </p>
-                    <div class="flex items-center space-x-4 mt-2 text-gray-600">
-                        <div class="flex items-center">
-                            <i class="ri-user-3-line mr-1 text-yellow-400"></i>
-                            <span><?php echo htmlspecialchars($instructorInfo['total_students']); ?> Students</span>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-signal-tower-line text-yellow-400"></i>
+                                    <span>Difficulty</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['Difficulty'] ?? 'Unknown') ?></span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-user-line text-yellow-400"></i>
+                                    <span>Students</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['student_count'] ?? '0') ?></span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 ">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-time-line text-yellow-400"></i>
+                                    <span>Duration</span>
+                                </div>
+                                <span><?= htmlspecialchars($courseDetails['Duration'] ?? 'Unknown') ?></span>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <i class="ri-video-line mr-1 text-yellow-400"></i>
-                            <span><?php echo $instructorInfo['total_courses']; ?> Courses</span>
+
+                        <div>
+                            <h3 class="font-semibold mb-2 text-xl pb-3 text-yellow-400">Resources</h3>
+                            <div class="space-y-2 mb-8">
+                                <button
+                                    class="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100">
+                                    <i class="ri-download-cloud-line"></i>
+                                    <span>Download Course</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold mb-2 text-xl border-b pb-3 text-yellow-400">Instructor
+                                </h3>
+                                <div class="flex items-center space-x-3 ">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center">
+                                        <img src="../uploads/avatars/<?php echo htmlspecialchars(isset($instructorInfo['avatarImg']) && $instructorInfo['avatarImg'] !== null ? $instructorInfo['avatarImg'] : 'simple.png'); ?>"
+                                            class="rounded-full object-cover">
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">
+                                            <?php echo htmlspecialchars($instructorInfo['username']); ?>
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            <?php echo htmlspecialchars(isset($instructorInfo['poste']) && $instructorInfo['poste'] !== null ? $instructorInfo['poste'] : 'Instructor'); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <p class="text-gray-600 mt-4 leading-relaxed">
-                        <?php
-                        echo nl2br(htmlspecialchars(
-                            isset($instructorInfo['bio']) && $instructorInfo['bio'] !== null
-                            ? $instructorInfo['bio']
-                            : 'Youdemy Instructor: A passionate educator dedicated to helping learners achieve their goals through engaging and insightful courses. With expertise in various fields, our instructors bring a wealth of knowledge and experience to empower students worldwide.'
-                        ));
-                        ?>
-                    </p>
                 </div>
             </div>
         </div>
-
-
     </div>
+
 
 
     <!-- Footer Section -->
@@ -257,7 +396,8 @@ if (!$courseDetails) {
                     <div class="flex items-center gap-2 mb-4">
                         <img src="../assets/images/Youdemy_Logo.svg" height="200" width="200">
                     </div>
-                    <p class="text-gray-600 mb-6">Eros in cursus turpis massa tincidunt Faucibus scelerisque eleifend
+                    <p class="text-gray-600 mb-6">Eros in cursus turpis massa tincidunt Faucibus scelerisque
+                        eleifend
                         vulputate sapien nec sagittis.</p>
                     <div class="flex gap-4">
                         <div
