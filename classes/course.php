@@ -123,10 +123,12 @@ class Course
         }
     }
 
-    public function addCourse(){
+    public function addCourse()
+    {
     }
 
-    public function displayCourse(){
+    public function displayCourse()
+    {
     }
 
 
