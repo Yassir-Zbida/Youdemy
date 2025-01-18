@@ -24,6 +24,23 @@ $instructor = new Instructor($db);
 $courseCount = $instructor->getCoursesCount($instructorId);
 $enrolledCount = $instructor->getEnrolledStudentsCount($instructorId);
 $courses = $instructor->getCoursesWithDetails($instructorId);
+
+if (isset($_SESSION['course_message'])) {
+    echo "<script>alert('" . $_SESSION['course_message'] . "');</script>";
+    unset($_SESSION['course_message']);
+}
+
+if (isset($_SESSION['course_message'])) {
+    echo "<script>
+            window.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('courseMessageText').textContent = '" . $_SESSION['course_message'] . "';
+                document.getElementById('courseMessageModal').classList.remove('hidden');
+            });
+          </script>";
+
+    unset($_SESSION['course_message']);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +68,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
     <header class="border-b bg-white">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
-                <a href="../index.php">
+                <a href="./instructor_dashboard.php">
                     <img src="../assets/images/Youdemy_Logo.svg" alt="Youdemy Platform">
                 </a>
                 <nav class="hidden md:flex items-center space-x-6">
@@ -185,9 +202,11 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                         <button class="text-yellow-600 hover:text-yellow-900 mr-4">
                                             <i class="ri-edit-line text-lg"></i>
                                         </button>
-                                        <button class="text-red-600 hover:text-red-900">
+                                        <button class="text-red-600 hover:text-red-900"
+                                            onclick="confirmDelete(<?php echo $course['id']; ?>)">
                                             <i class="ri-delete-bin-line text-lg"></i>
                                         </button>
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -327,7 +346,6 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                 <option value="video">Video</option>
                                 <option value="document">Document</option>
                             </select>
-
                         </div>
 
                         <div id="video-upload" class="hidden">
@@ -378,7 +396,6 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                 </form>
             </div>
         </div>
-        </>
 
 </body>
 

@@ -221,6 +221,16 @@ class Course
         }
     }
 
+    public function deleteCourse($courseId) {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM courses WHERE id = ?");
+            $stmt->bind_param("i", $courseId); 
+            return $stmt->execute();
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error deleting course: " . $e->getMessage());
+        }
+    }
+
     public function __destruct()
     {
         $this->db->closeConnection();

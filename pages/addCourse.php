@@ -54,14 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $result = $course->addCourse($title, $description, $price, $difficulty, $duration, $thumbnail, $categoryId, $tags, $contentType, $contentFile);
 
         if ($result) {
-            echo "Course added successfully!";
+            $_SESSION['course_message'] = 'Course added successfully';
         } else {
-            echo "Failed to add course.";
+            $_SESSION['course_message'] = 'Failed to add course';
         }
     } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
+        $_SESSION['course_message'] = 'Error: ' . $e->getMessage();
     }
+
+    header('Location: ./instructor_dashboard.php');
+    exit();
 }
 
 $db->closeConnection();
+
 ?>

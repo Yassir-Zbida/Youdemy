@@ -175,3 +175,10 @@ document.querySelector("form").addEventListener("submit", function (e) {
 
   this.submit();
 });
+
+
+function confirmDelete(courseId) {
+  if (confirm("Are you sure you want to delete this course?")) {
+      window.location.href = 'deleteCourse.php?id=' + courseId;
+  }
+}
