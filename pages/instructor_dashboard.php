@@ -23,6 +23,7 @@ $instructorId = $_SESSION['user_id'];
 $instructor = new Instructor($db);
 $courseCount = $instructor->getCoursesCount($instructorId);
 $enrolledCount = $instructor->getEnrolledStudentsCount($instructorId);
+$courses = $instructor->getCoursesWithDetails($instructorId);
 ?>
 
 <!DOCTYPE html>
@@ -102,7 +103,7 @@ $enrolledCount = $instructor->getEnrolledStudentsCount($instructorId);
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Enrolled Students</dt>
-                                <dd class="text-3xl font-semibold text-gray-900"><?php echo $enrolledCount ; ?></dd>
+                                <dd class="text-3xl font-semibold text-gray-900"><?php echo $enrolledCount; ?></dd>
                             </dl>
                         </div>
                     </div>
@@ -158,36 +159,41 @@ $enrolledCount = $instructor->getEnrolledStudentsCount($instructorId);
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">Introduction to Web Development</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Development
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">45</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Published
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button class="text-yellow-600 hover:text-yellow-900 mr-4">
-                                        <i class="ri-edit-line text-lg"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-900">
-                                        <i class="ri-delete-bin-line text-lg"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <?php foreach ($courses as $course): ?>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            <?= htmlspecialchars($course['title']); ?></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            <?= htmlspecialchars($course['category'] ?: 'Uncategorized'); ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <?= $course['students']; ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $course['status'] == 'published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
+                                            <?= ucfirst($course['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-yellow-600 hover:text-yellow-900 mr-4">
+                                            <i class="ri-edit-line text-lg"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="ri-delete-bin-line text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
 
         <div class="bg-white shadow rounded-lg border" id="add">
