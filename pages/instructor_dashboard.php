@@ -274,8 +274,8 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                     <label for="file-upload-thumbnail"
                                         class="relative cursor-pointer text-center bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
                                         <span class="text-center">Upload thumbnail</span>
-                                        <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file" required
-                                            class="sr-only">
+                                        <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file"
+                                            required class="sr-only">
                                     </label>
                                 </div>
                                 <p class="text-xs text-gray-500">Image files (JPG/PNG) up to 2MB</p>
@@ -296,23 +296,25 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                         </select>
                     </div>
 
+
+
                     <div class="mb-4">
                         <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Available Tags</label>
                         <div id="available-tags" class="space-y-2 space-x-1">
                             <?php
                             foreach ($tags as $tag) {
-                                echo "<div class='tag-item  space-x-2 inline-block p-2 px-4 border border-yellow-400 rounded-full cursor-pointer hover:bg-yellow-400' data-tag-id='" . $tag['id'] . "'>
-                                     <span class='tag-name'>" . htmlspecialchars($tag['name']) . "</span>
-                                     </div>";
+                                echo "<div class='tag-item space-x-2 inline-block p-2 px-4 border border-yellow-400 rounded-full cursor-pointer hover:bg-yellow-400' data-tag-id='" . $tag['id'] . "'>
+                                          <span class='tag-name'>" . htmlspecialchars($tag['name']) . "</span>
+                                      </div>";
                             }
                             ?>
                         </div>
 
                         <label for="selected-tags" class="block text-sm font-medium text-gray-700 mt-4 mb-2">Selected
                             Tags</label>
-                        <div id="selected-tags"  class="space-y-2 space-x-1">
-                        </div>
-                        <input type="hidden" name="selectedTags" required id="selected-tags-hidden"> 
+                        <div id="selected-tags" class="space-y-2 space-x-1"></div>
+                        <input type="hidden" name="selectedTags" id="selected-tags-hidden">
+
                         <p class="text-xs text-gray-500 mt-1">Click on a tag to select or remove it.</p>
                     </div>
 

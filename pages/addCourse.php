@@ -11,9 +11,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $description = $_POST['description'];
     $price = floatval($_POST['price']);
     $difficulty = $_POST['difficulty'];
-    $duration = intval($_POST['duration_hours']) ;
+    $duration = intval($_POST['duration_hours']);
     $categoryId = intval($_POST['category']);
-    $tags = isset($_POST['tags']) ? $_POST['tags'] : [];
+
+    $tags = [];
+    if (isset($_POST['selectedTags']) && !empty($_POST['selectedTags'])) {
+        $tagArray = explode(',', $_POST['selectedTags']);
+        $tags = array_map('intval', $tagArray);
+        $tags = array_filter($tags, function ($tag) {
+            return $tag > 0;
+        });
+    }
+
     $contentType = $_POST['content-type'];
     $status = 'Published';
 
@@ -22,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $thumbnailDir = '../uploads/thumbnails/';
         $thumbnailPath = $thumbnailDir . basename($_FILES['file-upload-thumbnail']['name']);
         if (move_uploaded_file($_FILES['file-upload-thumbnail']['tmp_name'], $thumbnailPath)) {
-            $thumbnail = $thumbnailPath; 
+            $thumbnail = $thumbnailPath;
         }
     }
 
@@ -31,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $videoDir = '../uploads/videos/';
         $contentPath = $videoDir . basename($_FILES['file-upload-video']['name']);
         if (move_uploaded_file($_FILES['file-upload-video']['tmp_name'], $contentPath)) {
-            $contentFile = $contentPath; 
+            $contentFile = $contentPath;
         }
     } elseif ($contentType === 'document' && !empty($_FILES['file-upload-document']['name'])) {
         $docDir = '../uploads/documents/';

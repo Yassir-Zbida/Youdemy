@@ -163,92 +163,63 @@ class Course
     }
 
 
-    // public function addCourse($title, $description, $price, $categoryId, $tags, $type, $difficulty, $duration_hours, $duration_minutes, $instructorId, $thumbnail, $videoUrl = null, $document = null) {
-    //     // Ensure that both duration_hours and duration_minutes are integers
-    //     $duration = (int)$duration_hours * 60 + (int)$duration_minutes;
-    
-    //     $query = "INSERT INTO courses 
-    //       (title, description, price, categoryId, thumbnail, content, videoUrl, instructorId, difficulty, duration, document, status)
-    //       VALUES 
-    //       (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Published')";
-
-
-    
-    //     // Prepare the statement
-    //     $stmt = $this->db->prepare($query);
-    
-    //     // Bind parameters (the order should match the placeholders in the query)
-    //     $stmt->bind_param("ssdsdssssssss", $title, $description, $price, $categoryId, $thumbnail, $content, $videoUrl, $instructorId, $difficulty, $duration, $document);
-    
-    //     // Set the status to "Published"
-    //     $status = "Published";
-    
-    //     // Execute the query
-    //     $stmt->execute();
-    
-    //     // Get the last inserted course ID
-    //     $course_id = $this->db->insert_id;
-    
-    //     // Insert the tags for the course
-    //     foreach ($tags as $tag) {
-    //         $tagQuery = "INSERT INTO course_tags (course_id, tag_id) VALUES (?, ?)";
-    //         $tagStmt = $this->db->prepare($tagQuery);
-    //         $tagStmt->bind_param("ii", $course_id, $tag);
-    //         $tagStmt->execute();
-    //     }
-    
-    //     return $course_id;
-    // }
-    
-    
-    
-    
-    public function addCourse($title, $description, $price, $difficulty, $duration, $thumbnail, $categoryId, $tags, $contentType, $contentFile) {
+    public function addCourse($title, $description, $price, $difficulty, $duration, $thumbnail, $categoryId, $tags, $contentType, $contentFile)
+    {
         $query = "INSERT INTO courses (title, `description`, price, categoryId, thumbnail, document, videoUrl, Difficulty, Duration, instructorId, `type`, `status`) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
-    
-        $thumbnailFileName = basename($thumbnail);
-        $document = ($contentType === 'document') ? basename($contentFile) : null;
-        $videoUrl = ($contentType === 'video') ? basename($contentFile) : null;
-        $instructorId = $_SESSION['user_id']; 
+
+        $thumbnailFileName = $thumbnail ? basename($thumbnail) : null;
+        $document = ($contentType === 'document' && $contentFile) ? basename($contentFile) : null;
+        $videoUrl = ($contentType === 'video' && $contentFile) ? basename($contentFile) : null;
+
+        $instructorId = $_SESSION['user_id'];
         $status = 'Published';
-    
+
         $stmt->bind_param(
             "ssdissssisss",
-            $title, $description, $price, $categoryId, $thumbnailFileName, $document, $videoUrl, $difficulty, $duration, $instructorId, $contentType, $status
+            $title,
+            $description,
+            $price,
+            $categoryId,
+            $thumbnailFileName,
+            $document,
+            $videoUrl,
+            $difficulty,
+            $duration,
+            $instructorId,
+            $contentType,
+            $status
         );
-    
+
         if ($stmt->execute()) {
             $courseId = $this->db->insert_id;
-    
+
             if (!$courseId) {
                 throw new Exception("Failed to retrieve the last inserted course ID.");
             }
-    
+
             if (!empty($tags)) {
+                if (is_string($tags)) {
+                    $tags = explode(',', $tags);
+                }
+
                 $tagQuery = "INSERT INTO coursetag (courseId, tagId) VALUES (?, ?)";
                 $tagStmt = $this->db->prepare($tagQuery);
-    
+
                 foreach ($tags as $tag) {
                     $tagStmt->bind_param("ii", $courseId, $tag);
-                    $tagStmt->execute();
+                    if (!$tagStmt->execute()) {
+                        echo "Failed to insert tag ID $tag for course ID $courseId: " . $tagStmt->error . "<br>";
+                    }
                 }
             }
+
             return true;
         } else {
             throw new Exception("Course insertion failed: " . $stmt->error);
         }
     }
-    
-    
-    
-    
-
-    
-    
-    
-    
 
     public function __destruct()
     {
