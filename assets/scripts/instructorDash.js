@@ -123,4 +123,35 @@ const fileInput = document.getElementById('file-upload-video');
             });
         });
     });
+
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const hours = parseInt(document.getElementById('duration_hours').value || '0');
+        const minutes = parseInt(document.getElementById('duration_minutes').value || '0');
+        
+        let durationString = '';
+        
+        if (hours > 0) {
+            durationString += `${hours} hour${hours !== 1 ? 's' : ''}`;
+        }
+        
+        if (minutes > 0) {
+            if (hours > 0) durationString += ' ';
+            durationString += `${minutes} min${minutes !== 1 ? 's' : ''}`;
+        }
+        
+        if (durationString === '') {
+            durationString = '0 mins';
+        }
+        
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'duration';
+        hiddenInput.value = durationString;
+        this.appendChild(hiddenInput);
+        
+        this.submit();
+    });
     

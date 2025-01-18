@@ -163,7 +163,8 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            <?= htmlspecialchars($course['title']); ?></div>
+                                            <?= htmlspecialchars($course['title']); ?>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
@@ -172,11 +173,12 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <?= $course['students']; ?></td>
+                                        <?= $course['students']; ?>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $course['status'] == 'published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
-                                            <?= ucfirst($course['status']); ?>
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?= $course['status'] == 'Published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
+                                            <?= htmlspecialchars($course['status']); ?>
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -205,15 +207,62 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
             <div class="border-t border-gray-200 px-4 py-5 sm:px-6" id="courseForm">
                 <form class="space-y-6">
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-4">Title</label>
                         <input type="text" name="title" id="title"
                             class="mt-1 block w-full rounded-md p-2 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <label for="description"
+                            class="block text-sm font-medium text-gray-700 mb-4">Description</label>
                         <textarea id="description" name="description" rows="3"
                             class="mt-1 block w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-4">Price</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
+                                <input type="number" name="price" id="price" min="0" step="0.01"
+                                    class="mt-1 block w-full rounded-md p-2 pl-7 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="difficulty"
+                                class="block text-sm font-medium text-gray-700 mb-4">Difficulty</label>
+                            <select id="difficulty" name="difficulty"
+                                class="mt-1 block w-full rounded-md p-2 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-4">Duration</label>
+                            <div class="flex space-x-2">
+                                <div class="flex-1">
+                                    <div class="relative">
+                                        <input type="number" name="duration_hours" id="duration_hours" min="0"
+                                            placeholder="0"
+                                            class="mt-1 block w-full rounded-md p-2 pr-14 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 text-center">
+                                        <span
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-sm">hours</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="relative">
+                                        <input type="number" name="duration_minutes" id="duration_minutes" min="0"
+                                            max="59" placeholder="0"
+                                            class="mt-1 block w-full rounded-md p-2 pr-16 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 text-center">
+                                        <span
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-sm">mins</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="thumbnail-upload">
@@ -236,7 +285,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                     </div>
 
                     <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-4">Category</label>
                         <select id="category" name="category"
                             class="mt-1 block p-2 w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
                             <?php
@@ -268,9 +317,8 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                         <p class="text-xs text-gray-500 mt-1">Click on a tag to select or remove it.</p>
                     </div>
 
-
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Content Type</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-4">Content Type</label>
                         <div>
 
                             <select id="content-type"
