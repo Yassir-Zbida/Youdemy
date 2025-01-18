@@ -1,7 +1,11 @@
 <?php
 require_once '../classes/course.php';
 require_once '../classes/user.php';
+require_once '../classes/db.php';
+require_once '../classes/category.php';
 require_once '../classes/instructor.php';
+require_once '../classes/tag.php';
+
 
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -11,6 +15,11 @@ if ($userRole != 'Instructor') {
 }
 $menuItems = User::getMenuItems($userRole);
 $db = new Database();
+$category = new category($db);
+$categories = $category->getCategories();
+$tag = new Tag($db);
+$tags = $tag->getTags();
+
 ?>
 
 <!DOCTYPE html>
@@ -221,19 +230,35 @@ $db = new Database();
                         <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                         <select id="category" name="category"
                             class="mt-1 block p-2 w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
-                            <option>Development</option>
-                            <option>Design</option>
-                            <option>Marketing</option>
-                            <option>Business</option>
+                            <?php
+                            foreach ($categories as $cat) {
+                                echo "<option value=\"" . $cat['id'] . "\">" . htmlspecialchars($cat['name']) . "</option>";
+                            }
+                            ?>
                         </select>
                     </div>
 
-                    <div>
-                        <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
-                        <input type="text" name="tags" id="tags"
-                            class="mt-1 block p-2 w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
-                            placeholder="Separate tags with commas">
+                    <div class="mb-4">
+                        <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Available Tags</label>
+                        <div id="available-tags" class="space-y-2 space-x-1">
+                            <?php
+                            foreach ($tags as $tag) {
+                                echo "<div class='tag-item  space-x-2 inline-block p-2 px-4 border border-yellow-400 rounded-full cursor-pointer hover:bg-yellow-400' data-tag-id='" . $tag['id'] . "'>
+                                     <span class='tag-name'>" . htmlspecialchars($tag['name']) . "</span>
+                                     </div>";
+                            }
+                            ?>
+                        </div>
+
+                        <label for="selected-tags" class="block text-sm font-medium text-gray-700 mt-4 mb-2">Selected
+                            Tags</label>
+                        <div id="selected-tags" class="space-y-2 space-x-1">
+                        </div>
+
+                        <input type="hidden" name="tags[]" id="selected-tags-hidden">
+                        <p class="text-xs text-gray-500 mt-1">Click on a tag to select or remove it.</p>
                     </div>
+
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Content Type</label>

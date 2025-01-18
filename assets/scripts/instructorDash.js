@@ -81,3 +81,46 @@ const fileInput = document.getElementById('file-upload-video');
             thumbnailFileNameDisplay.textContent = ''; 
         }
     }); 
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const availableTagsContainer = document.getElementById("available-tags");
+        const selectedTagsContainer = document.getElementById("selected-tags");
+        const selectedTagsHiddenInput = document.getElementById("selected-tags-hidden");
+        const selectedTags = new Set(); // Keep track of selected tag IDs
+    
+        function updateHiddenInput() {
+            selectedTagsHiddenInput.value = Array.from(selectedTags).join(",");
+        }
+    
+        // Handle click events for both containers
+        [availableTagsContainer, selectedTagsContainer].forEach((container) => {
+            container.addEventListener("click", (event) => {
+                const tagItem = event.target.closest(".tag-item");
+                if (!tagItem) return;
+    
+                const tagId = tagItem.getAttribute("data-tag-id");
+    
+                if (container === availableTagsContainer) {
+                    tagItem.classList.remove("hover:bg-yellow-400");
+                    tagItem.classList.add("bg-yellow-400", "text-white");
+                    const removeIcon = document.createElement("span");
+                    removeIcon.textContent = "×";
+                    removeIcon.classList.add("remove-icon", "ml-2", "text-white", "cursor-pointer");
+                    tagItem.appendChild(removeIcon);
+                    selectedTagsContainer.appendChild(tagItem);
+                    selectedTags.add(tagId);
+                } else if (container === selectedTagsContainer) {
+                    tagItem.classList.remove("bg-yellow-400", "text-white");
+                    tagItem.classList.add("hover:bg-yellow-400");
+                    const removeIcon = tagItem.querySelector(".remove-icon");
+                    if (removeIcon) removeIcon.remove();
+                    availableTagsContainer.appendChild(tagItem);
+                    selectedTags.delete(tagId);
+                }
+    
+                updateHiddenInput();
+            });
+        });
+    });
+    

@@ -14,6 +14,10 @@ class Database {
         }
     }
 
+    public function prepare($query) {
+        return $this->connection->prepare($query);
+    }
+
     public function getConnection() {
         return $this->connection;
     }
