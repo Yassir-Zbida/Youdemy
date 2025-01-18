@@ -26,6 +26,13 @@ class Database {
         $this->connection->close();
     }
 
+    public function __get($name) {
+        if ($name === 'insert_id') {
+            return $this->connection->insert_id;
+        }
+        return null;
+    }
+
 
 }
 

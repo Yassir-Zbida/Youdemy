@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('add').scrollIntoView({ behavior: 'smooth' });
     }
 });
-// Récupération des éléments
+
 const selectElement = document.getElementById('content-type');
 const videoUploadDiv = document.getElementById('video-upload');
 const documentUploadDiv = document.getElementById('document-upload');
@@ -83,17 +83,57 @@ const fileInput = document.getElementById('file-upload-video');
     }); 
 
 
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const availableTagsContainer = document.getElementById("available-tags");
+    //     const selectedTagsContainer = document.getElementById("selected-tags");
+    //     const selectedTagsHiddenInput = document.getElementById("selected-tags-hidden");
+    //     const selectedTags = new Set(); 
+    
+    //     function updateHiddenInput() {
+    //         selectedTagsHiddenInput.value = Array.from(selectedTags).join(",");
+    //     }
+    
+    //     [availableTagsContainer, selectedTagsContainer].forEach((container) => {
+    //         container.addEventListener("click", (event) => {
+    //             const tagItem = event.target.closest(".tag-item");
+    //             if (!tagItem) return;
+    
+    //             const tagId = tagItem.getAttribute("data-tag-id");
+    
+    //             if (container === availableTagsContainer) {
+    //                 tagItem.classList.remove("hover:bg-yellow-400");
+    //                 tagItem.classList.add("bg-yellow-400", "text-white");
+    //                 const removeIcon = document.createElement("span");
+    //                 removeIcon.textContent = "×";
+    //                 removeIcon.classList.add("remove-icon", "ml-2", "text-white", "cursor-pointer");
+    //                 tagItem.appendChild(removeIcon);
+    //                 selectedTagsContainer.appendChild(tagItem);
+    //                 selectedTags.add(tagId);
+    //             } else if (container === selectedTagsContainer) {
+    //                 tagItem.classList.remove("bg-yellow-400", "text-white");
+    //                 tagItem.classList.add("hover:bg-yellow-400");
+    //                 const removeIcon = tagItem.querySelector(".remove-icon");
+    //                 if (removeIcon) removeIcon.remove();
+    //                 availableTagsContainer.appendChild(tagItem);
+    //                 selectedTags.delete(tagId);
+    //             }
+    
+    //             updateHiddenInput();
+    //         });
+    //     });
+    // });
+
+
     document.addEventListener("DOMContentLoaded", () => {
         const availableTagsContainer = document.getElementById("available-tags");
         const selectedTagsContainer = document.getElementById("selected-tags");
         const selectedTagsHiddenInput = document.getElementById("selected-tags-hidden");
-        const selectedTags = new Set(); // Keep track of selected tag IDs
+        const selectedTags = new Set(); 
     
         function updateHiddenInput() {
-            selectedTagsHiddenInput.value = Array.from(selectedTags).join(",");
+            selectedTagsHiddenInput.value = Array.from(selectedTags).join(","); // Update hidden input value
         }
     
-        // Handle click events for both containers
         [availableTagsContainer, selectedTagsContainer].forEach((container) => {
             container.addEventListener("click", (event) => {
                 const tagItem = event.target.closest(".tag-item");
@@ -102,6 +142,7 @@ const fileInput = document.getElementById('file-upload-video');
                 const tagId = tagItem.getAttribute("data-tag-id");
     
                 if (container === availableTagsContainer) {
+                    // Move tag to "Selected Tags"
                     tagItem.classList.remove("hover:bg-yellow-400");
                     tagItem.classList.add("bg-yellow-400", "text-white");
                     const removeIcon = document.createElement("span");
@@ -111,6 +152,7 @@ const fileInput = document.getElementById('file-upload-video');
                     selectedTagsContainer.appendChild(tagItem);
                     selectedTags.add(tagId);
                 } else if (container === selectedTagsContainer) {
+                    // Move tag back to "Available Tags"
                     tagItem.classList.remove("bg-yellow-400", "text-white");
                     tagItem.classList.add("hover:bg-yellow-400");
                     const removeIcon = tagItem.querySelector(".remove-icon");
@@ -123,7 +165,6 @@ const fileInput = document.getElementById('file-upload-video');
             });
         });
     });
-
 
     document.querySelector('form').addEventListener('submit', function(e) {
         e.preventDefault();

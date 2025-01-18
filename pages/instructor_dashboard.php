@@ -205,17 +205,17 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                     id="toggleIcon"></i>
             </div>
             <div class="border-t border-gray-200 px-4 py-5 sm:px-6" id="courseForm">
-                <form class="space-y-6">
+                <form class="space-y-6" method="POST" enctype="multipart/form-data" action="addCourse.php">
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700 mb-4">Title</label>
-                        <input type="text" name="title" id="title"
+                        <input type="text" name="title" id="title" required
                             class="mt-1 block w-full rounded-md p-2 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
                     </div>
 
                     <div>
                         <label for="description"
                             class="block text-sm font-medium text-gray-700 mb-4">Description</label>
-                        <textarea id="description" name="description" rows="3"
+                        <textarea id="description" name="description" rows="3" required
                             class="mt-1 block w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"></textarea>
                     </div>
 
@@ -224,7 +224,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                             <label for="price" class="block text-sm font-medium text-gray-700 mb-4">Price</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
-                                <input type="number" name="price" id="price" min="0" step="0.01"
+                                <input type="number" name="price" id="price" min="0" step="0.01" required
                                     class="mt-1 block w-full rounded-md p-2 pl-7 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
                             </div>
                         </div>
@@ -232,11 +232,11 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                         <div>
                             <label for="difficulty"
                                 class="block text-sm font-medium text-gray-700 mb-4">Difficulty</label>
-                            <select id="difficulty" name="difficulty"
+                            <select id="difficulty" name="difficulty" required
                                 class="mt-1 block w-full rounded-md p-2 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
-                                <option value="beginner">Beginner</option>
-                                <option value="intermediate">Intermediate</option>
-                                <option value="advanced">Advanced</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
                             </select>
                         </div>
 
@@ -246,7 +246,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                 <div class="flex-1">
                                     <div class="relative">
                                         <input type="number" name="duration_hours" id="duration_hours" min="0"
-                                            placeholder="0"
+                                            placeholder="0" required
                                             class="mt-1 block w-full rounded-md p-2 pr-14 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 text-center">
                                         <span
                                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-sm">hours</span>
@@ -255,7 +255,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                 <div class="flex-1">
                                     <div class="relative">
                                         <input type="number" name="duration_minutes" id="duration_minutes" min="0"
-                                            max="59" placeholder="0"
+                                            max="59" placeholder="0" required
                                             class="mt-1 block w-full rounded-md p-2 pr-16 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 text-center">
                                         <span
                                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-sm">mins</span>
@@ -274,7 +274,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
                                     <label for="file-upload-thumbnail"
                                         class="relative cursor-pointer text-center bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
                                         <span class="text-center">Upload thumbnail</span>
-                                        <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file"
+                                        <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file" required
                                             class="sr-only">
                                     </label>
                                 </div>
@@ -286,7 +286,7 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
 
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-4">Category</label>
-                        <select id="category" name="category"
+                        <select id="category" name="category" required
                             class="mt-1 block p-2 w-full rounded-md border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
                             <?php
                             foreach ($categories as $cat) {
@@ -310,23 +310,22 @@ $courses = $instructor->getCoursesWithDetails($instructorId);
 
                         <label for="selected-tags" class="block text-sm font-medium text-gray-700 mt-4 mb-2">Selected
                             Tags</label>
-                        <div id="selected-tags" class="space-y-2 space-x-1">
+                        <div id="selected-tags"  class="space-y-2 space-x-1">
                         </div>
-
-                        <input type="hidden" name="tags[]" id="selected-tags-hidden">
+                        <input type="hidden" name="selectedTags" required id="selected-tags-hidden"> 
                         <p class="text-xs text-gray-500 mt-1">Click on a tag to select or remove it.</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-4">Content Type</label>
                         <div>
-
-                            <select id="content-type"
+                            <select id="content-type" name="content-type"
                                 class="mt-1 block w-full rounded-md p-2 border border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                                 <option value="">-- Select content type --</option>
                                 <option value="video">Video</option>
                                 <option value="document">Document</option>
                             </select>
+
                         </div>
 
                         <div id="video-upload" class="hidden">
