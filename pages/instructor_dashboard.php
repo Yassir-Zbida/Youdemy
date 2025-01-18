@@ -22,8 +22,7 @@ $tags = $tag->getTags();
 $instructorId = $_SESSION['user_id'];
 $instructor = new Instructor($db);
 $courseCount = $instructor->getCoursesCount($instructorId);
-echo "Instructor $instructorId has $courseCount courses.";
-
+$enrolledCount = $instructor->getEnrolledStudentsCount($instructorId);
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +102,7 @@ echo "Instructor $instructorId has $courseCount courses.";
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Enrolled Students</dt>
-                                <dd class="text-3xl font-semibold text-gray-900">148</dd>
+                                <dd class="text-3xl font-semibold text-gray-900"><?php echo $enrolledCount ; ?></dd>
                             </dl>
                         </div>
                     </div>

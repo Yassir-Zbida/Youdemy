@@ -69,6 +69,28 @@ class Instructor extends User {
         return $courseCount;
     }
 
+    public function getEnrolledStudentsCount($instructorId) {
+        $connection = $this->db->getConnection();
+        $enrolledStudentsCount = 0; 
+    
+        $query = "
+            SELECT COUNT(DISTINCT e.studentId) AS total_enrolled_students
+            FROM enrollment e
+            INNER JOIN courses c ON e.courseId = c.id
+            WHERE c.instructorId = ?
+        ";
+        $stmt = $connection->prepare($query);
+        if ($stmt) {
+            $stmt->bind_param("i", $instructorId);
+            $stmt->execute();
+            $stmt->bind_result($enrolledStudentsCount);
+            $stmt->fetch();
+            $stmt->close();
+        }
+    
+        return $enrolledStudentsCount;
+    }
+    
     
     
 }
