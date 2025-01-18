@@ -5,7 +5,7 @@ require_once(__DIR__ . '/user.php');
 class Instructor extends User {
 
     public function performAction(){
-        return "hey" ;
+        return "action" ;
     }
 
     public function __construct($db) {
@@ -53,7 +53,24 @@ class Instructor extends User {
         }
     }
     
+    public function getCoursesCount($instructorId) {
+        $connection = $this->db->getConnection();
+        $courseCount = 0; 
+    
+        $stmt = $connection->prepare("SELECT COUNT(*) FROM courses WHERE instructorId = ?");
+        if ($stmt) {
+            $stmt->bind_param("i", $instructorId);
+            $stmt->execute();
+            $stmt->bind_result($courseCount);
+            $stmt->fetch();
+            $stmt->close();
+        }
+    
+        return $courseCount;
+    }
 
+    
+    
 }
 ?>
 

@@ -19,6 +19,10 @@ $category = new category($db);
 $categories = $category->getCategories();
 $tag = new Tag($db);
 $tags = $tag->getTags();
+$instructorId = $_SESSION['user_id'];
+$instructor = new Instructor($db);
+$courseCount = $instructor->getCoursesCount($instructorId);
+echo "Instructor $instructorId has $courseCount courses.";
 
 ?>
 
@@ -84,7 +88,7 @@ $tags = $tag->getTags();
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Total Courses</dt>
-                                <dd class="text-3xl font-semibold text-gray-900">12</dd>
+                                <dd class="text-3xl font-semibold text-gray-900"><?php echo $courseCount; ?></dd>
                             </dl>
                         </div>
                     </div>
