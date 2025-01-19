@@ -265,21 +265,17 @@ if (!$courseDetails) {
                     </div>
                     <div class="bg-white rounded-lg border shadow-sm p-6 mt-4 pb-10">
                         <h2 class="text-lg font-semibold mb-4 text-yellow-400 border-b pb-3">Mark Your Course Progress</h2>
-                        <form id="completionForm" action="submit_progress.php" method="POST">
-                            <label for="progress" class="block text-sm font-medium text-gray-700 mb-2">Select Your
-                                Progress</label>
-                            <select name="progress" id="progress" class="block w-full p-2 border rounded-md">
+                        <form action="submitProgress.php" method="POST">
+                            <input type="hidden" name="courseId" value="<?php echo htmlspecialchars($courseId); ?>">
+                            <label for="progress" class="block text-sm font-medium text-gray-700 mb-2">Update Progress:</label>
+                            <select name="progress" id="progress" class="block text-sm font-medium text-gray-700 mb-2 w-full p-3 border rounded-lg">
                                 <option value="0">0% - Not Started</option>
                                 <option value="25">25% - Just Started</option>
                                 <option value="50">50% - Halfway Done</option>
                                 <option value="75">75% - Almost Completed</option>
                                 <option value="100">100% - Completed</option>
                             </select>
-
-                            <button type="submit" name="sumbit"
-                                class="mt-6 bg-yellow-400 w-full text-white px-4 py-2 rounded-lg hover:bg-green-700 hover:text-white">
-                                Submit Progress
-                            </button>
+                            <button type="submit" class="mt-6 bg-yellow-400 w-full text-white px-4 py-2 rounded-lg hover:bg-green-700 hover:text-white">Submit</button>
                         </form>
                     </div>
 

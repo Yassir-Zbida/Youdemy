@@ -231,6 +231,20 @@ class Course
         }
     }
 
+    public function updateCompletionRate($courseId, $studentId, $completionRate) {
+        $query = "UPDATE enrollment 
+                  SET completionRate = ? 
+                  WHERE courseId = ? AND studentId = ?";
+        $stmt = $this->db->prepare($query);
+
+        if ($stmt) {
+            $stmt->bind_param("sii", $completionRate, $courseId, $studentId);
+            return $stmt->execute();
+        } else {
+            return false; 
+        }
+    }
+
     public function __destruct()
     {
         $this->db->closeConnection();
