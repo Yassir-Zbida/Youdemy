@@ -123,10 +123,31 @@ class Instructor extends User {
     
         return $courses;
     }
+
+    public function getCompletionRate($instructorId) {
+        $connection = $this->db->getConnection();
+        $averageCompletionRate = 0;
     
+        $query = "
+            SELECT AVG(e.completionRate) AS avgCompletionRate
+            FROM enrollment e
+            INNER JOIN courses c ON e.courseId = c.id
+            WHERE c.instructorId = ?
+        ";
     
+        $stmt = $connection->prepare($query);
+        if ($stmt) {
+            $stmt->bind_param("i", $instructorId);
+            $stmt->execute();
+            $stmt->bind_result($averageCompletionRate);
+            $stmt->fetch();
+            $stmt->close();
+        }
     
+        return round($averageCompletionRate, 2);
+    }
     
+       
 }
 ?>
 
