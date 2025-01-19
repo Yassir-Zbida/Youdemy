@@ -138,13 +138,9 @@ if (isset($_SESSION['course_message'])) {
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Completion Rate</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Courses</dt>
                                 <dd class="text-3xl font-semibold text-gray-900">
-                                    <?php
-                                    echo isset($completionRate) && is_numeric($completionRate)
-                                        ? htmlspecialchars($completionRate, ENT_QUOTES, 'UTF-8') . '%'
-                                        : '0%';
-                                    ?>
+                                    <?php echo $courseCount; ?>
                                 </dd>
                             </dl>
                         </div>
