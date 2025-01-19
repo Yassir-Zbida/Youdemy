@@ -267,15 +267,18 @@ if (!$courseDetails) {
                         <h2 class="text-lg font-semibold mb-4 text-yellow-400 border-b pb-3">Mark Your Course Progress</h2>
                         <form action="submitProgress.php" method="POST">
                             <input type="hidden" name="courseId" value="<?php echo htmlspecialchars($courseId); ?>">
-                            <label for="progress" class="block text-sm font-medium text-gray-700 mb-2">Update Progress:</label>
-                            <select name="progress" id="progress" class="block text-sm font-medium text-gray-700 mb-2 w-full p-3 border rounded-lg">
+                            <label for="progress" class="block text-sm font-medium text-gray-700 mb-2">Update
+                                Progress:</label>
+                            <select name="progress" id="progress"
+                                class="block text-sm font-medium text-gray-700 mb-2 w-full p-3 border rounded-lg">
                                 <option value="0">0% - Not Started</option>
                                 <option value="25">25% - Just Started</option>
                                 <option value="50">50% - Halfway Done</option>
                                 <option value="75">75% - Almost Completed</option>
                                 <option value="100">100% - Completed</option>
                             </select>
-                            <button type="submit" class="mt-6 bg-yellow-400 w-full text-white px-4 py-2 rounded-lg hover:bg-green-700 hover:text-white">Submit</button>
+                            <button type="submit"
+                                class="mt-6 bg-yellow-400 w-full text-white px-4 py-2 rounded-lg hover:bg-green-700 hover:text-white">Submit</button>
                         </form>
                     </div>
 
@@ -331,14 +334,6 @@ if (!$courseDetails) {
                                 </div>
                             </div>
                             <div>
-                                <h3 class="font-semibold mb-2 text-xl pb-3 text-yellow-400">Resources</h3>
-                                <div class="space-y-2 mb-8">
-                                    <button
-                                        class="w-full flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100">
-                                        <i class="ri-download-cloud-line"></i>
-                                        <span>Download Course</span>
-                                    </button>
-                                </div>
                                 <div>
                                     <h3 class="font-semibold mb-2 text-xl border-b pb-3 text-yellow-400">Instructor</h3>
                                     <div class="flex items-center space-x-3 ">
@@ -358,6 +353,24 @@ if (!$courseDetails) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="bg-white rounded-lg border shadow-sm p-6 mt-4 pb-10">
+                        <h2 class="text-lg font-semibold mb-4 text-yellow-400 border-b pb-3">Mark Your Course Progress</h2>
+                        <form action="submitProgress.php" method="POST">
+                            <input type="hidden" name="courseId" value="<?php echo htmlspecialchars($courseId); ?>">
+                            <label for="progress" class="block text-sm font-medium text-gray-700 mb-2">Update
+                                Progress:</label>
+                            <select name="progress" id="progress"
+                                class="block text-sm font-medium text-gray-700 mb-2 w-full p-3 border rounded-lg">
+                                <option value="0">0% - Not Started</option>
+                                <option value="25">25% - Just Started</option>
+                                <option value="50">50% - Halfway Done</option>
+                                <option value="75">75% - Almost Completed</option>
+                                <option value="100">100% - Completed</option>
+                            </select>
+                            <button type="submit"
+                                class="mt-6 bg-yellow-400 w-full text-white px-4 py-2 rounded-lg hover:bg-green-700 hover:text-white">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
