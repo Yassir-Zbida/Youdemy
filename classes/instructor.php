@@ -74,7 +74,7 @@ class Instructor extends User {
         $enrolledStudentsCount = 0; 
     
         $query = "
-            SELECT COUNT(DISTINCT e.studentId) AS total_enrolled_students
+            SELECT COUNT(e.studentId) AS total_enrolled_students
             FROM enrollment e
             INNER JOIN courses c ON e.courseId = c.id
             WHERE c.instructorId = ?
