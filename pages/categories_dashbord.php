@@ -1,9 +1,7 @@
 <?php
-require_once '../classes/course.php';
 require_once '../classes/user.php';
 require_once '../classes/db.php';
 require_once '../classes/category.php';
-require_once '../classes/admin.php';
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';

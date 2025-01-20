@@ -26,9 +26,10 @@ class Tag {
     public function setName($name) {
         $this->name = $name;
     }
+    
 
     public function createTag($name) {
-        $stmt = $this->db->prepare('INSERT INTO Tag (name) VALUES (?)');
+        $stmt = $this->db->prepare('INSERT INTO tags (name) VALUES (?)');
         if ($stmt) {
             $stmt->bind_param('s', $name);
             $result = $stmt->execute();
@@ -38,7 +39,6 @@ class Tag {
             return false; 
         }
     }
-
 
     public function getTags() {
         $stmt = $this->db->prepare('SELECT * FROM Tags'); 
@@ -53,7 +53,7 @@ class Tag {
     
 
     public function deleteTag($id) {
-        $stmt = $this->db->prepare('DELETE FROM Tag WHERE id = ?');
+        $stmt = $this->db->prepare('DELETE FROM tags WHERE id = ?');
         if ($stmt) {
             $stmt->bind_param('i', $id); 
             $result = $stmt->execute();
@@ -62,9 +62,7 @@ class Tag {
         } else {
             return false; 
         }
-    }
-
-    
+    } 
     
 }
 
