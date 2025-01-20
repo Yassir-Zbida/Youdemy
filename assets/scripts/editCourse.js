@@ -52,63 +52,6 @@ thumbnailInput.addEventListener("change", (event) => {
   }
 });
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   const availableTagsContainer = document.getElementById("available-tags");
-//   const selectedTagsContainer = document.getElementById("selected-tags");
-//   const selectedTagsHiddenInput = document.getElementById(
-//     "selected-tags-hidden"
-//   );
-//   const selectedTags = new Set();
-
-//   function updateHiddenInput() {
-//     const selectedTagsArray = Array.from(selectedTags);
-//     selectedTagsHiddenInput.value = selectedTagsArray.join(",");
-//     console.log("Hidden input updated:", selectedTagsHiddenInput.value);
-//   }
-
-//   function handleTagClick(event) {
-//     const tagItem = event.target.closest(".tag-item");
-//     if (!tagItem) return;
-
-//     const tagId = tagItem.getAttribute("data-tag-id");
-//     const container = tagItem.closest("#available-tags, #selected-tags");
-
-//     const clonedTag = tagItem.cloneNode(true);
-
-//     if (container === availableTagsContainer) {
-//       clonedTag.classList.remove("hover:bg-yellow-400");
-//       clonedTag.classList.add("bg-yellow-400", "text-white");
-
-//       const removeIcon = document.createElement("span");
-//       removeIcon.textContent = "×";
-//       removeIcon.classList.add(
-//         "remove-icon",
-//         "ml-2",
-//         "text-white",
-//         "cursor-pointer"
-//       );
-//       clonedTag.appendChild(removeIcon);
-
-//       selectedTagsContainer.appendChild(clonedTag);
-//       selectedTags.add(tagId);
-//     } else {
-//       clonedTag.classList.remove("bg-yellow-400", "text-white");
-//       clonedTag.classList.add("hover:bg-yellow-400");
-
-//       const removeIcon = clonedTag.querySelector(".remove-icon");
-//       if (removeIcon) removeIcon.remove();
-
-//       availableTagsContainer.appendChild(clonedTag);
-//       selectedTags.delete(tagId);
-//     }
-
-//     tagItem.remove();
-//     updateHiddenInput();
-//   }
-
-//   availableTagsContainer.addEventListener("click", handleTagClick);
-//   selectedTagsContainer.addEventListener("click", handleTagClick);
-// });
 
 document.addEventListener("DOMContentLoaded", () => {
     const availableTagsContainer = document.getElementById("available-tags");
@@ -116,18 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedTagsHiddenInput = document.getElementById("selected-tags-hidden");
     const selectedTags = new Set();
   
-    // Add selected tags to the Set and move them to the selected tags container
     const selectedTagItems = document.querySelectorAll("#available-tags .tag-item[data-selected='selected']");
     selectedTagItems.forEach(item => {
       const tagId = item.getAttribute("data-tag-id");
       selectedTags.add(tagId);
-      // Move selected tags to the selected tags container
       const clonedItem = item.cloneNode(true);
       clonedItem.classList.remove("hover:bg-yellow-400");
       clonedItem.classList.add("bg-yellow-400", "text-white");
-      addRemoveIcon(clonedItem);  // Add the remove icon dynamically
+      addRemoveIcon(clonedItem);
       selectedTagsContainer.appendChild(clonedItem);
-      item.remove();  // Remove from available tags
+      item.remove(); 
     });
   
     function updateHiddenInput() {
@@ -137,13 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     function addRemoveIcon(tagItem) {
-      // Check if the tag already has a remove icon to prevent adding multiple
       if (!tagItem.querySelector(".remove-icon")) {
         const removeIcon = document.createElement("span");
         removeIcon.textContent = "×";
         removeIcon.classList.add("remove-icon", "ml-2", "text-white", "cursor-pointer");
         removeIcon.addEventListener("click", (event) => {
-          event.stopPropagation(); // Prevent the click event from bubbling
+          event.stopPropagation(); 
           handleTagRemove(tagItem);
         });
         tagItem.appendChild(removeIcon);
@@ -158,18 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const container = tagItem.closest("#available-tags, #selected-tags");
   
       if (container === availableTagsContainer) {
-        // Add the tag to the selected tags container
         if (!selectedTags.has(tagId)) {
           const clonedItem = tagItem.cloneNode(true);
           clonedItem.classList.remove("hover:bg-yellow-400");
           clonedItem.classList.add("bg-yellow-400", "text-white");
-          addRemoveIcon(clonedItem);  // Add the remove icon
+          addRemoveIcon(clonedItem);  
           selectedTagsContainer.appendChild(clonedItem);
           selectedTags.add(tagId);
-          tagItem.remove(); // Remove the tag from the available tags container
+          tagItem.remove(); 
         }
       } else {
-        // Remove the tag from the selected tags container
         handleTagRemove(tagItem);
       }
   
@@ -179,19 +117,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleTagRemove(tagItem) {
       const tagId = tagItem.getAttribute("data-tag-id");
   
-      // Remove from the selected tags container
       tagItem.remove();
   
-      // Re-add to the available tags container without the remove icon
-      const existingTagInAvailable = document.querySelector(`#available-tags .tag-item[data-tag-id='${tagId}']`);
-      if (!existingTagInAvailable) {
-        const clonedItem = tagItem.cloneNode(true);
-        clonedItem.classList.remove("bg-yellow-400", "text-white");
-        clonedItem.classList.add("hover:bg-yellow-400");
-        availableTagsContainer.appendChild(clonedItem);
-      }
+      const clonedItem = tagItem.cloneNode(true);
+      clonedItem.classList.remove("bg-yellow-400", "text-white");
+      clonedItem.classList.add("hover:bg-yellow-400");
+      clonedItem.querySelector(".remove-icon")?.remove();
+      availableTagsContainer.appendChild(clonedItem);
   
-      // Update the selected tags set and hidden input
       selectedTags.delete(tagId);
       updateHiddenInput();
     }
@@ -199,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     availableTagsContainer.addEventListener("click", handleTagClick);
     selectedTagsContainer.addEventListener("click", handleTagClick);
   });
+  
   
 
 document.querySelector("form").addEventListener("submit", (event) => {
