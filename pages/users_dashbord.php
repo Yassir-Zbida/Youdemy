@@ -1,26 +1,3 @@
-<?php
-require_once '../classes/course.php';
-require_once '../classes/user.php';
-require_once '../classes/db.php';
-require_once '../classes/category.php';
-require_once '../classes/admin.php';
-require_once '../classes/tag.php';
-session_start();
-$isLoggedIn = isset($_SESSION['user_id']);
-$userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
-if ($userRole != 'Admin') {
-    header('Location: ../index.php');
-}
-$db = new Database();
-$category = new category($db);
-$categories = $category->getCategories();
-$tag = new Tag($db);
-$tags = $tag->getTags();
-$AdminId = $_SESSION['user_id'];
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,11 +17,11 @@ $AdminId = $_SESSION['user_id'];
                     </div>
 
                 <nav class="space-y-1">
-                    <a href="./admin_dashbord.php" class="flex items-center gap-3 px-3 py-2 text-sm text-yellow-400 rounded-md bg-gray-800">
+                    <a href="./admin_dashboard.php" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-400 hover:bg-gray-800 rounded-md">
                         <i class="ri-dashboard-line text-xl"></i>
                         <span class="text-lg">Overview</span>
                     </a>
-                    <a href="./users_dashbord.php" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-400 hover:bg-gray-800 rounded-md">
+                    <a href="./users_dashbord.php" class="flex items-center gap-3 px-3 py-2 text-sm text-yellow-400 rounded-md bg-gray-800">
                         <i class="ri-group-line text-xl"></i>
                         <span class="text-lg">Users</span>
                     </a>
@@ -80,7 +57,7 @@ $AdminId = $_SESSION['user_id'];
             <header class="bg-white border-b p-4">
                 <div class="flex items-center justify-between max-w-7xl mx-auto">
                     <div>
-                        <h1 class="text-2xl font-semibold">Welcome, Admin 👋</h1>
+                        <h1 class="text-2xl font-semibold">Users</h1>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative">
