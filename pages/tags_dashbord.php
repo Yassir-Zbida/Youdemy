@@ -81,7 +81,7 @@ if (isset($_GET['message'])) {
         <header class="bg-white border-b p-4">
                 <div class="flex items-center justify-between max-w-7xl mx-auto">
                     <div>
-                        <h1 class="text-2xl font-semibold">Tags</h1>
+                        <h1 class="text-2xl font-semibold">Tags Management</h1>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative">

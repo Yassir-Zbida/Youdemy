@@ -1,3 +1,40 @@
+<?php
+require_once '../classes/db.php';
+require_once '../classes/admin.php';
+session_start();
+
+$isLoggedIn = isset($_SESSION['user_id']);
+$userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
+if ($userRole != 'Admin') {
+    header('Location: ../index.php');
+    exit;
+}
+
+$db = new Database();
+$admin = new Admin($db, $_SESSION['user_id']);
+$users = $admin->getUsers();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'], $_POST['status'])) {
+    $userId = $_POST['user_id'];
+    $status = $_POST['status'];
+
+    if ($admin->updateUserStatus($userId, $status)) {
+        header('Location: users_dashbord.php?message=User status updated successfully');
+        exit;
+    } else {
+        header('Location: users_dashbord.php?message=Error updating user status');
+        exit;
+    }
+}
+
+if (isset($_GET['message'])) {
+    $message = htmlspecialchars($_GET['message']); 
+    echo "<script type='text/javascript'>
+        alert('$message'); 
+        history.replaceState(null, '', window.location.pathname); // This removes the 'message' from the URL
+    </script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +45,7 @@
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-50">
     <div class="flex h-screen">
         <aside class="w-64 bg-gray-900 text-white">
@@ -54,17 +92,17 @@
         </aside>
 
         <main class="flex-1 overflow-auto">
-            <header class="bg-white border-b p-4">
+        <header class="bg-white border-b p-4">
                 <div class="flex items-center justify-between max-w-7xl mx-auto">
                     <div>
-                        <h1 class="text-2xl font-semibold">Users</h1>
+                        <h1 class="text-2xl font-semibold ml-3">Users Management</h1>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="Search for courses" class="bg-gray-100 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <input type="text" placeholder="Search for users" class="bg-gray-100 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
                         </div>
-                        <button class="bg-yellow-50 text-yellow-600 px-4 py-2 rounded-md text-sm font-medium">Enter</button>
+                        <button class="bg-yellow-50 text-yellow-600 px-4 py-2 rounded-md text-sm font-medium">Search</button>
                         <i class="ri-notification-line text-xl text-gray-400"></i>
                         <i class="ri-settings-3-line text-xl text-gray-400"></i>
                     </div>
@@ -72,71 +110,122 @@
             </header>
 
             <div class="p-6 max-w-7xl mx-auto">
-                <div class="grid grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-lg font-semibold">Portfolio Value</h2>
-                            <div class="flex items-center gap-4">
-                                <button class="text-gray-500 text-sm">Export</button>
-                                <select class="text-sm border rounded px-2 py-1">
-                                    <option>Last 30 Days</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="h-64 bg-gray-50"></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h2 class="text-lg font-semibold mb-6">Available Revenue</h2>
-                        <div class="flex items-center justify-center h-64">
-                            <div class="relative w-40 h-40 rounded-full border-8 border-yellow-400">
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="text-center">
-                                        <div class="text-2xl font-bold">70%</div>
-                                        <div class="text-sm text-gray-500">Unavailable</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm">
-                    <div class="p-6 border-b">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold">Revenue</h2>
-                            <div class="flex items-center gap-4">
-                                <select class="text-sm border rounded px-2 py-1">
-                                    <option>All Transaction</option>
-                                </select>
-                                <select class="text-sm border rounded px-2 py-1">
-                                    <option>Last 30 Days</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <table class="w-full">
+                <h2 class="text-xl font-medium mb-4">Students</h2>
+                <div class="bg-white rounded-lg shadow-sm mb-6 border">
+                   
+                    <table class="w-full border border-gray-200">
                         <thead class="bg-gray-50 text-sm text-gray-500">
                             <tr>
-                                <th class="text-left p-4">Date</th>
-                                <th class="text-left p-4">ID</th>
-                                <th class="text-left p-4">Value</th>
-                                <th class="text-left p-4">Status</th>
-                                <th class="text-left p-4">Description</th>
+                                <th class="text-left p-4 border-b">ID</th>
+                                <th class="text-left p-4 border-b">Username</th>
+                                <th class="text-left p-4 border-b">Email</th>
+                                <th class="text-left p-4 border-b">Status</th>
+                                <th class="text-right pr-[115px] p-4 border-b">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm">
-                            <tr class="border-b">
-                                <td class="p-4">Jan 25th, 2020</td>
-                                <td class="p-4">#462980</td>
-                                <td class="p-4">$95,550</td>
-                                <td class="p-4">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-50 text-green-600">
-                                        <span class="w-1 h-1 bg-green-600 rounded-full mr-1"></span>
-                                        Available
-                                    </span>
-                                </td>
-                                <td class="p-4 text-gray-500">Personal Payment</td>
+                            <?php foreach ($users as $user): ?>
+                                <?php if ($user['role'] == 'Student'): ?>
+                                    <tr class="border-b last:border-none hover:bg-gray-50">
+                                        <td class="p-4"><?php echo htmlspecialchars($user['id']); ?></td>
+                                        <td class="p-4"><?php echo htmlspecialchars($user['username']); ?></td>
+                                        <td class="p-4"><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td class="p-4">
+                                            <?php
+                                            $statusClass = '';
+                                            $statusText = $user['status'];
+                                            
+                                            if ($statusText == 'pending') {
+                                                $statusClass = 'bg-yellow-500 text-white';
+                                            } elseif ($statusText == 'suspended') {
+                                                $statusClass = 'bg-red-500 text-white';
+                                            } elseif ($statusText == 'activated') {
+                                                $statusClass = 'bg-green-500 text-white';
+                                            }
+                                            ?>
+                                            <span class="px-4 py-2 rounded-xl <?php echo $statusClass; ?>">
+                                                <?php echo ucfirst($statusText); ?>
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="p-4 flex items-center justify-end">
+                                            <form action="users_dashbord.php" method="POST" >
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <select name="status" class="border rounded-lg p-2 px-3" onchange="this.form.submit()">
+                                                    <option value="pending" <?php echo ($user['status'] == 'pending') ? 'selected' : ''; ?>>Pending</option>
+                                                    <option value="suspended" <?php echo ($user['status'] == 'suspended') ? 'selected' : ''; ?>>Suspended</option>
+                                                    <option value="activated" <?php echo ($user['status'] == 'activated') ? 'selected' : ''; ?>>Activated</option>
+                                                </select>
+                                            </form>
+                                            <a href="delete_user.php?id=<?php echo $user['id']; ?>"
+                                            class="text-red-600 hover:text-red-800 ml-4"
+                                            onclick="return confirm('Are you sure you want to delete this Student ?');">
+                                            <i class="ri-delete-bin-line text-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="text-xl font-medium mb-4">Instructors</h2>
+                <div class="bg-white rounded-lg shadow-sm mb-6 border">
+                    <table class="w-full border border-gray-200">
+                        <thead class="bg-gray-50 text-sm text-gray-500">
+                            <tr>
+                                <th class="text-left p-4 border-b">ID</th>
+                                <th class="text-left p-4 border-b">Username</th>
+                                <th class="text-left p-4 border-b">Email</th>
+                                <th class="text-left p-4 border-b">Status</th>
+                                <th class="text-right pr-[115px] p-4 border-b">Actions</th>
                             </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <?php foreach ($users as $user): ?>
+                                <?php if ($user['role'] == 'Instructor'): ?>
+                                    <tr class="border-b last:border-none hover:bg-gray-50">
+                                        <td class="p-4"><?php echo htmlspecialchars($user['id']); ?></td>
+                                        <td class="p-4"><?php echo htmlspecialchars($user['username']); ?></td>
+                                        <td class="p-4"><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td class="p-4">
+                                            <?php
+                                            $statusClass = '';
+                                            $statusText = $user['status'];
+                                            
+                                            if ($statusText == 'pending') {
+                                                $statusClass = 'bg-yellow-500 text-white';
+                                            } elseif ($statusText == 'suspended') {
+                                                $statusClass = 'bg-red-500 text-white';
+                                            } elseif ($statusText == 'activated') {
+                                                $statusClass = 'bg-green-500 text-white';
+                                            }
+                                            ?>
+                                            <span class="px-4 py-2 rounded-lg <?php echo $statusClass; ?>">
+                                                <?php echo ucfirst($statusText); ?>
+                                            </span>
+                                        </td>
+                                        <td class="p-4 flex items-center justify-end">
+                                            <form action="users_dashbord.php" method="POST">
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <select name="status" class="rounded-lg border p-2 px-3" onchange="this.form.submit()">
+                                                    <option value="pending" <?php echo ($user['status'] == 'pending') ? 'selected' : ''; ?>>Pending</option>
+                                                    <option value="suspended" <?php echo ($user['status'] == 'suspended') ? 'selected' : ''; ?>>Suspended</option>
+                                                    <option value="activated" <?php echo ($user['status'] == 'activated') ? 'selected' : ''; ?>>Activated</option>
+                                                </select>
+                                            </form>
+                                            <a href="delete_user.php?id=<?php echo $user['id']; ?>"
+                                              class="text-red-600 hover:text-red-800 ml-4"
+                                              onclick="return confirm('Are you sure you want to delete this Instructor ?');">
+                                              <i class="ri-delete-bin-line text-lg"></i>
+                                            </a>
+                                        </td>
+                                    
+                                    </td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
