@@ -9,7 +9,6 @@ if ($userRole != 'Admin') {
     header('Location: ../index.php');
 }
 $AdminId = $_SESSION['user_id'];
-var_dump($_SESSION['user_id']);
 $db = new Database();
 $category = new category($db);
 $categories = $category->getCategories();
@@ -82,7 +81,7 @@ $categories = $category->getCategories();
             <header class="bg-white border-b p-4">
                 <div class="flex items-center justify-between max-w-7xl mx-auto">
                     <div>
-                        <h1 class="text-2xl font-semibold">Categories Management</h1>
+                        <h1 class="text-2xl font-semibold ml-3">Categories Management</h1>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative">
