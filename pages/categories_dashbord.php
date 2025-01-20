@@ -4,18 +4,17 @@ require_once '../classes/user.php';
 require_once '../classes/db.php';
 require_once '../classes/category.php';
 require_once '../classes/admin.php';
-require_once '../classes/tag.php';
 session_start();
-// $isLoggedIn = isset($_SESSION['user_id']);
-// $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
-// if ($userRole != 'Admin') {
-//     header('Location: ../index.php');
-// }
+$isLoggedIn = isset($_SESSION['user_id']);
+$userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
+if ($userRole != 'Admin') {
+    header('Location: ../index.php');
+}
+$AdminId = $_SESSION['user_id'];
+var_dump($_SESSION['user_id']);
 $db = new Database();
 $category = new category($db);
 $categories = $category->getCategories();
-// $AdminId = $_SESSION['user_id'];
-
 
 ?>
 
@@ -90,11 +89,11 @@ $categories = $category->getCategories();
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="Search for catagories"
+                            <input type="text" placeholder="Enter catagory name"
                                 class="bg-gray-100 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
                         </div>
-                        <button class="bg-yellow-50 text-yellow-600 px-4 py-2 rounded-md text-sm font-medium">Add
-                            Category</button>
+                        <button class="bg-yellow-50 text-yellow-600 px-4 py-2 rounded-md text-sm font-medium">Search
+                            </button>
                         <i class="ri-notification-line text-xl text-gray-400"></i>
                         <i class="ri-settings-3-line text-xl text-gray-400"></i>
                     </div>
@@ -102,45 +101,52 @@ $categories = $category->getCategories();
             </header>
 
             <div class="p-6 max-w-7xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm mb-6 border">
+                    <form action="add_category.php" method="POST" class="flex items-center gap-4 p-6">
+                        <input type="text" name="category_name" placeholder="Enter category name"
+                            class="p-2 border border-gray-300 rounded-lg w-64" required>
+                        <button type="submit" class="bg-yellow-500 text-white p-2 px-4 rounded-lg hover:bg-yellow-600">
+                            Add Category
+                        </button>
+                    </form>
+                </div>
                 <div class="bg-white rounded-lg shadow-sm">
-                    <div class="p-6 border-b">
-                        <h2 class="text-lg font-semibold">Categories List</h2>
-                    </div>
-                    <table class="w-full">
-                        <thead class="bg-gray-50 text-sm text-gray-500">
-                            <tr>
-                                <th class="text-left p-4">ID</th>
-                                <th class="text-left p-4">Name</th>
-                                <th class="text-right p-4 mr-6">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            <?php foreach ($categories as $category): ?>
-                                <tr class="border-b">
-                                    <td class="p-4"><?php echo htmlspecialchars($category['id']); ?></td>
-                                    <td class="p-4"><?php echo htmlspecialchars($category['name']); ?></td>
-                                    <td class="p-4 text-right">
-                                        <a href="edit_category.php?id=<?php echo $category['id']; ?>"
-                                            class="text-blue-600 text-right  hover:text-blue-800">
-                                            <i class="ri-edit-line text-lg"></i>
-                                        </a>
-                                        <a href="delete_category.php?id=<?php echo $category['id']; ?>"
-                                            class="text-red-600 hover:text-red-800 ml-4"
-                                            onclick="return confirm('Are you sure you want to delete this category?');">
-                                            <i class="ri-delete-bin-line text-lg"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
 
+                    <div class="overflow-hidden rounded-lg">
+                        <table class="w-full border border-gray-200">
+                            <thead class="bg-gray-50 text-sm text-gray-500">
+                                <tr>
+                                    <th class="text-left p-4 border-b border-gray-200">ID</th>
+                                    <th class="text-left p-4 border-b border-gray-200">Name</th>
+                                    <th class="text-right p-4 border-b border-gray-200">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <?php foreach ($categories as $category): ?>
+                                    <tr class="border-b last:border-none hover:bg-gray-50">
+                                        <td class="p-4 border-b border-gray-200">
+                                            <?php echo htmlspecialchars($category['id']); ?>
+                                        </td>
+                                        <td class="p-4 border-b border-gray-200">
+                                            <?php echo htmlspecialchars($category['name']); ?>
+                                        </td>
+                                        <td class="p-4 text-right pr-8 border-b border-gray-200">
+                                            <a href="delete_category.php?id=<?php echo $category['id']; ?>"
+                                                class="text-red-600 hover:text-red-800 ml-4"
+                                                onclick="return confirm('Are you sure you want to delete this category ?');">
+                                                <i class="ri-delete-bin-line text-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
-
-
     </div>
+
 </body>
 
 </html>
