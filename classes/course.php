@@ -245,6 +245,21 @@ class Course
         }
     }
 
+    public function getCourseTags($courseId) {
+        $stmt = $this->db->prepare('SELECT t.id, t.name FROM Tags t 
+                                    JOIN coursetag ct ON ct.tagId = t.id 
+                                    WHERE ct.courseId = ?');
+        if ($stmt) {
+            $stmt->bind_param('i', $courseId); // Use courseId as a parameter
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            return [];
+        }
+    }
+    
+
     public function __destruct()
     {
         $this->db->closeConnection();
