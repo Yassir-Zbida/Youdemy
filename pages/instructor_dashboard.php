@@ -8,6 +8,13 @@ require_once '../classes/tag.php';
 
 
 session_start();
+if (isset($_SESSION['alert_message'])) {
+    $message = $_SESSION['alert_message'];
+    echo "<script>alert('$message');</script>";
+    unset($_SESSION['alert_message']); 
+}
+
+
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? ($_SESSION['role'] ?? 'default') : 'default';
 if ($userRole != 'Instructor') {

@@ -232,11 +232,7 @@ $recentEnrollments = $admin->getRecentEnrollments(10);
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold">Recent Enrollments</h2>
                             <div class="flex items-center gap-4">
-                                <select class="text-sm border rounded px-2 py-1">
-                                    <option>Last 7 Days</option>
-                                    <option>Last 30 Days</option>
-                                    <option>Last 90 Days</option>
-                                </select>
+                                <a href=""><button class="text-sm text-yellow-400 font-bold underline hover:text-yellow-700">View All</button></a>
                             </div>
                         </div>
                     </div>

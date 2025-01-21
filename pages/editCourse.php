@@ -21,23 +21,23 @@ $instructorId = $_SESSION['user_id'];
 $instructor = new Instructor($db);
 $courseId = isset($_GET['id']) ? $_GET['id'] : null;
 if (!$courseId) {
-    die("Course ID is missing.");
+    die("Course ID is missing");
 }
 $course = new Course();
-var_dump($courseId);
 $courseDetails = $course->getCourseById($courseId);
 
 
-$selectedTags = $course->getCourseTags($courseId); // Get the tags associated with the course
+$selectedTags = $course->getCourseTags($courseId);
 $selectedTagIds = array_map(function ($tag) {
-    return $tag['id']; }, $selectedTags);
+    return $tag['id'];
+}, $selectedTags);
 
 $tags = $tag->getTags();
-
 
 if (!$courseDetails) {
     die("Course not found");
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -46,11 +46,11 @@ if (!$courseDetails) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instructor Dashboard - Youdemy</title>
+    <title>Edit Course - Youdemy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
-    <script src="../assets/scripts/editCourse.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.svg">
+    <script src="../assets/scripts/editCourse.js" defer></script>
 </head>
 
 <body>
@@ -83,8 +83,9 @@ if (!$courseDetails) {
         </div>
     </header>
     <div class="border-t border-gray-200 px-4 py-5 sm:px-6" id="courseForm">
-        <form class="space-y-6" method="POST" enctype="multipart/form-data" action="addCourse.php">
+        <form class="space-y-6" method="POST" enctype="multipart/form-data" action="edit_course.php">
             <div>
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($courseDetails['id']); ?>">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-4">Title</label>
                 <input type="text" name="title" id="title"
                     value="<?php echo htmlspecialchars($courseDetails['title']); ?>" required
@@ -123,8 +124,8 @@ if (!$courseDetails) {
                     <div class="flex space-x-2">
                         <div class="flex-1">
                             <div class="relative">
-                                <input type="number" name="duration_hours" id="duration_hours" min="0" placeholder="0"
-                                    required value="<?php echo floor($courseDetails['Duration'] / 60); ?>"
+                                <input type="number" name="duration" id="duration" min="0" placeholder="0" required
+                                    value="<?php echo floor($courseDetails['Duration']); ?>"
                                     class="mt-1 block w-full rounded-md p-2 pr-14 border border-gray-200 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 text-center">
                                 <span
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-sm">hours</span>
@@ -134,21 +135,28 @@ if (!$courseDetails) {
                 </div>
             </div>
 
-            <div id="thumbnail-upload">
-                <label class="block my-4 text-sm font-medium text-gray-700">Thumbnail </label>
-                <div
-                    class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-orange-300 border-dashed rounded-md">
-                    <div class="space-y-1 text-center">
-                        <div class="flex text-sm text-gray-600 justify-center">
-                            <label for="file-upload-thumbnail"
-                                class="relative cursor-pointer text-center bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
-                                <span class="text-center">Upload thumbnail</span>
-                                <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file" required
-                                    class="sr-only">
-                            </label>
+            <div id="thumbnail-upload" class="flex items-center space-x-6">
+                <div class="flex-1">
+                    <label class="block my-4 text-sm font-medium text-gray-700">Thumbnail</label>
+                    <img src="../uploads/thumbnails/<?php echo htmlspecialchars($courseDetails['thumbnail']); ?>"
+                        class="rounded-lg w-full h-full max-h-40 object-cover" id="thumbnail-image">
+                </div>
+
+                <div class="flex-[2]">
+                    <div class="flex justify-center items-center px-6 pt-5 pb-6 border-2 border-orange-300 border-dashed rounded-md"
+                        style="height: 100%; max-height: 10rem;">
+                        <div class="space-y-1 text-center">
+                            <div class="flex text-sm text-gray-600 justify-center">
+                                <label for="file-upload-thumbnail"
+                                    class="relative cursor-pointer bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                                    <span>Upload thumbnail</span>
+                                    <input id="file-upload-thumbnail" name="file-upload-thumbnail" type="file"
+                                        class="sr-only">
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500">Image files (JPG/PNG) up to 2MB</p>
+                            <p id="thumbnail-file-name" class="text-xs text-gray-700 mt-2"></p>
                         </div>
-                        <p class="text-xs text-gray-500">Image files (JPG/PNG) up to 2MB</p>
-                        <p id="thumbnail-file-name" class="text-xs text-gray-700 mt-2"></p>
                     </div>
                 </div>
             </div>
@@ -166,30 +174,22 @@ if (!$courseDetails) {
                 </select>
             </div>
 
-
-            <div id="available-tags" class="space-y-2 space-x-1">
-                <?php
-                foreach ($tags as $tag) {
-                    // Check if the tag is already selected
-                    $isSelected = in_array($tag['id'], $selectedTagIds) ? 'selected' : '';
-                    echo "<div class='tag-item space-x-2 inline-block p-2 px-4 border border-yellow-400 rounded-full cursor-pointer hover:bg-yellow-400' data-tag-id='" . $tag['id'] . "' data-selected='$isSelected'>
-                  <span class='tag-name'>" . htmlspecialchars($tag['name']) . "</span>
+            <div class="space-y-4">
+                <label class="block text-sm font-medium text-gray-700 mb-4">Select Tags</label>
+                <div class="flex flex-wrap space-x-4">
+                    <?php
+                    foreach ($tags as $tag) {
+                        $isChecked = in_array($tag['id'], $selectedTagIds) ? 'checked' : '';
+                        echo "<div class='flex items-center space-x-2'>
+                <input type='checkbox' id='tag-{$tag['id']}' name='tags[]' value='{$tag['id']}' $isChecked class='h-5 w-5'>
+                <label for='tag-{$tag['id']}' class='text-sm text-gray-700'>" . htmlspecialchars($tag['name']) . "</label>
               </div>";
-                }
-                ?>
+                    }
+                    ?>
+                </div>
             </div>
 
-            <div id="selected-tags" class="space-y-2 space-x-1">
-                <?php
-                // Render selected tags first in the selected tags section
-                foreach ($selectedTags as $tag) {
-                    echo "<div class='tag-item space-x-2 inline-block p-2 px-4 border border-yellow-400 rounded-full bg-yellow-400 text-white' data-tag-id='" . $tag['id'] . "'>
-                  <span class='tag-name'>" . htmlspecialchars($tag['name']) . "</span>
-                  <span class='remove-icon ml-2 text-white cursor-pointer'>×</span>
-              </div>";
-                }
-                ?>
-            </div>
+
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-4">Content Type</label>
@@ -197,58 +197,63 @@ if (!$courseDetails) {
                     <select id="content-type" name="content-type"
                         class="mt-1 block w-full rounded-md p-2 border border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                         <option value="">-- Select content type --</option>
-                        <option value="video">Video</option>
-                        <option value="document">Document</option>
+                        <option value="video" <?= ($courseDetails['type'] === 'video') ? 'selected' : '' ?>>Video</option>
+                        <option value="document" <?= ($courseDetails['type'] === 'document') ? 'selected' : '' ?>>Document
+                        </option>
                     </select>
                 </div>
 
-                <div id="video-upload" class="hidden">
-                    <label class="block my-4 text-sm font-medium text-gray-700">Video :</label>
+                <div id="video-upload" class="<?= ($courseDetails['type'] === 'video') ? '' : 'hidden' ?>">
+                    <label class="block my-4 text-sm font-medium text-gray-700">Video:</label>
                     <div
                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-orange-300 border-dashed rounded-md">
-                        <div class="space-y-1">
-                            <div class="flex text-sm text-gray-600 text-center justify-center">
+                        <div class="space-y-1 text-center">
+                            <div class="flex text-sm text-gray-600 justify-center">
                                 <label for="file-upload-video"
-                                    class="relative cursor-pointer bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                                    class="relative cursor-pointer bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
                                     <span>Upload video</span>
                                     <input id="file-upload-video" name="file-upload-video" type="file" class="sr-only">
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500">MP4/AVI file up to 10MB</p>
-                            <p id="file-name" class="text-xs text-gray-700 mt-2"></p>
+                            <p id="file-name" class="text-xs text-gray-700 mt-2">
+                                <?= !empty($courseDetails['videoUrl']) ? htmlspecialchars($courseDetails['videoUrl']) : '' ?>
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div id="document-upload" class="hidden">
-                    <label class="block my-4 text-sm font-medium text-gray-700">Document :</label>
+                <div id="document-upload" class="<?= ($courseDetails['type'] === 'document') ? '' : 'hidden' ?>">
+                    <label class="block my-4 text-sm font-medium text-gray-700">Document:</label>
                     <div
                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-orange-300 border-dashed rounded-md">
                         <div class="space-y-1 text-center">
                             <div class="flex text-sm text-gray-600 justify-center">
                                 <label for="file-upload-document"
-                                    class="relative cursor-pointer text-center bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
-                                    <span class="text-center">Upload file</span>
+                                    class="relative cursor-pointer bg-white rounded-md font-medium text-yellow-400 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                                    <span>Upload file</span>
                                     <input id="file-upload-document" name="file-upload-document" type="file"
                                         class="sr-only">
                                 </label>
                             </div>
                             <p class="text-xs text-gray-500">PDF document up to 10MB</p>
-                            <p id="document-file-name" class="text-xs text-gray-700 mt-2"></p>
+                            <p id="document-file-name" class="text-xs text-gray-700 mt-2">
+                                <?= !empty($courseDetails['document']) ? htmlspecialchars($courseDetails['document']) : '' ?>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
+
             <div class="flex justify-end">
-                <button type="submit"
+                <button type="submit" name="submit"
                     class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
                     Edit Course
                 </button>
             </div>
         </form>
     </div>
-
 
     <!-- Footer Section -->
     <footer class="bg-yellow-10 py-16 ">

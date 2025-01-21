@@ -250,7 +250,7 @@ class Course
                                     JOIN coursetag ct ON ct.tagId = t.id 
                                     WHERE ct.courseId = ?');
         if ($stmt) {
-            $stmt->bind_param('i', $courseId); // Use courseId as a parameter
+            $stmt->bind_param('i', $courseId); 
             $stmt->execute();
             $result = $stmt->get_result();
             return $result->fetch_all(MYSQLI_ASSOC);
@@ -258,7 +258,86 @@ class Course
             return [];
         }
     }
+
+    public function editCourse($id, $title, $description, $price, $difficulty, $duration, $thumbnail, $categoryId, $tags, $contentType, $contentFile) {
+        $thumbnailFileName = NULL;
+        $documentFileName = NULL;
+        $videoUrl = NULL;
     
+        if ($thumbnail) {
+            $thumbnailFileName = basename($thumbnail); 
+        }
+    
+        if ($contentFile) {
+            if ($contentType === 'document') {
+                $documentFileName = basename($contentFile);
+            } elseif ($contentType === 'video') {
+                $videoUrl = basename($contentFile);
+            }
+        }
+    
+        $query = "UPDATE courses 
+                  SET title = ?, 
+                      description = ?, 
+                      price = ?, 
+                      categoryId = ?, 
+                      Difficulty = ?, 
+                      Duration = ?, 
+                      `type` = ?, 
+                      thumbnail = CASE WHEN ? IS NOT NULL THEN ? ELSE thumbnail END, 
+                      document = CASE WHEN ? = 'document' AND ? IS NOT NULL THEN ? ELSE document END, 
+                      videoUrl = CASE WHEN ? = 'video' AND ? IS NOT NULL THEN ? ELSE videoUrl END
+                  WHERE id = ?";
+    
+        $stmt = $this->db->prepare($query);
+    
+        $stmt->bind_param(
+            "ssdissssssssssss", 
+            $title, 
+            $description, 
+            $price, 
+            $categoryId, 
+            $difficulty, 
+            $duration, 
+            $contentType, 
+            $thumbnailFileName, 
+            $thumbnailFileName, 
+            $contentType, 
+            $documentFileName, 
+            $documentFileName, 
+            $contentType,
+            $videoUrl,
+            $videoUrl,
+            $id
+        );
+    
+        if ($stmt->execute()) {
+            $deleteTagsQuery = "DELETE FROM coursetag WHERE courseId = ?";
+            $deleteStmt = $this->db->prepare($deleteTagsQuery);
+            $deleteStmt->bind_param("i", $id);
+            $deleteStmt->execute();
+    
+            if (!empty($tags)) {
+                if (is_string($tags)) {
+                    $tags = explode(',', $tags);
+                }
+    
+                $tagQuery = "INSERT INTO coursetag (courseId, tagId) VALUES (?, ?)";
+                $tagStmt = $this->db->prepare($tagQuery);
+    
+                foreach ($tags as $tag) {
+                    $tagStmt->bind_param("ii", $id, $tag);
+                    if (!$tagStmt->execute()) {
+                        echo "Failed to insert tag ID $tag for course ID $id: " . $tagStmt->error . "<br>";
+                    }
+                }
+            }
+    
+            return true;
+        } else {
+            throw new Exception("Failed to update course: " . $stmt->error);
+        }
+    }
 
     public function __destruct()
     {
