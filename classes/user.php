@@ -95,7 +95,7 @@ abstract class User
     }
 
     
-
+    
 
 
     public static function logout()

@@ -143,6 +143,9 @@ class Instructor extends User {
             $stmt->fetch();
             $stmt->close();
         }
+        if ($averageCompletionRate === null) {
+            $averageCompletionRate = 0; 
+        }
     
         return round($averageCompletionRate, 2);
     }

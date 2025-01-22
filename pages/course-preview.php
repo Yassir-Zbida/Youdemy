@@ -15,7 +15,8 @@ $course = new Course();
 $courseDetails = $course->getCourseById($courseId);
 $instructorId = $courseDetails['instructorId'];
 $instructorInfo = $course->getInstructorInfo($instructorId);
-$studentId = $_SESSION['user_id'];
+
+$studentId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
 
 if (!$courseDetails) {
     die("Course not found");
